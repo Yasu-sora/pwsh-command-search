@@ -19,7 +19,24 @@ const PWSH_CATEGORIES = [
   { key: "security", label: "セキュリティ・権限" },
   { key: "eventlog", label: "イベントログ" },
   { key: "system", label: "システム・環境情報" },
-  { key: "archive", label: "アーカイブ" }
+  { key: "archive", label: "アーカイブ" },
+  { key: "scripting", label: "スクリプト・言語機能" },
+  { key: "alias", label: "エイリアス管理" },
+  { key: "psdrive", label: "PSドライブ・プロバイダー" },
+  { key: "scheduledtask", label: "タスクスケジューラ" },
+  { key: "firewall", label: "ファイアウォール" },
+  { key: "disk", label: "ディスク・ボリューム管理" },
+  { key: "localaccount", label: "ローカルユーザー・グループ管理" },
+  { key: "dnsclient", label: "DNSクライアント設定" },
+  { key: "printer", label: "プリンター管理" },
+  { key: "interaction", label: "ユーザー入力・対話" },
+  { key: "bitlocker", label: "ドライブ暗号化 (BitLocker)" },
+  { key: "hyperv", label: "Hyper-V仮想マシン" },
+  { key: "winfeature", label: "Windowsの機能" },
+  { key: "activedirectory", label: "Active Directory" },
+  { key: "device", label: "デバイス管理" },
+  { key: "debug", label: "デバッグ" },
+  { key: "event", label: "イベント・トランスクリプト" }
 ];
 
 const PWSH_COMMANDS = [
@@ -1774,5 +1791,1721 @@ const PWSH_COMMANDS = [
       { command: 'Expand-Archive -Path "work.zip" -DestinationPath "C:\\work" -Force', description: "展開先に同名ファイルがあっても上書きする" }
     ],
     tags: ["ZIP解凍", "展開する", "解凍する", "圧縮ファイルを開く"]
+  },
+
+  // ===== file (追加) =====
+  {
+    id: "get-filehash", name: "Get-FileHash", category: "file",
+    summary: "ファイルのハッシュ値（チェックサム）を計算する",
+    syntax: "Get-FileHash [-Path] <string[]> [-Algorithm <string>]",
+    parameters: [
+      { name: "-Path", description: "対象のファイルパス" },
+      { name: "-Algorithm", description: "計算方式（既定はSHA256。MD5, SHA1なども指定可）" }
+    ],
+    examples: [
+      { command: 'Get-FileHash -Path "setup.exe"', description: "ファイルのハッシュ値（SHA256）を計算してダウンロードファイルの整合性を確認する" },
+      { command: 'Get-FileHash -Path "setup.exe" -Algorithm MD5', description: "MD5アルゴリズムでハッシュ値を計算する" }
+    ],
+    tags: ["ハッシュ値", "チェックサム", "ファイルの改ざん確認", "MD5", "SHA256", "整合性確認"]
+  },
+
+  // ===== help (追加) =====
+  {
+    id: "get-verb", name: "Get-Verb", category: "help",
+    summary: "PowerShellのコマンドで使われる、承認済みの動詞（Get、Setなど）の一覧を取得する",
+    syntax: "Get-Verb [[-Verb] <string[]>]",
+    parameters: [
+      { name: "-Verb", description: "絞り込みたい動詞名" }
+    ],
+    examples: [
+      { command: "Get-Verb", description: "PowerShellで使われる承認済みの動詞（Get, Set, New等）の一覧を表示する" },
+      { command: "Get-Verb -Verb Get", description: "特定の動詞の分類（グループ）を確認する" }
+    ],
+    tags: ["動詞一覧", "コマンドの命名規則", "承認済み動詞"]
+  },
+
+  // ===== scripting =====
+  {
+    id: "new-object", name: "New-Object", category: "scripting",
+    summary: ".NETのクラスから新しいオブジェクト（インスタンス）を作成する",
+    syntax: "New-Object [-TypeName] <string> [-ArgumentList <object[]>]",
+    parameters: [
+      { name: "-TypeName", description: ".NETの型名（例: System.Collections.ArrayList）" },
+      { name: "-ArgumentList", description: "コンストラクタに渡す引数" }
+    ],
+    examples: [
+      { command: "$list = New-Object -TypeName System.Collections.ArrayList", description: "可変長リストの.NETオブジェクトを作成する" },
+      { command: "New-Object -TypeName System.Net.WebClient", description: "ファイルダウンロードなどに使えるWebClientオブジェクトを作成する" }
+    ],
+    tags: [".NETオブジェクト作成", "インスタンス生成", "オブジェクト生成"]
+  },
+  {
+    id: "invoke-expression", name: "Invoke-Expression", aliases: ["iex"], category: "scripting",
+    summary: "文字列として組み立てたコマンドやスクリプトを、その場で実行する",
+    syntax: "Invoke-Expression [-Command] <string>",
+    parameters: [
+      { name: "-Command", description: "実行する文字列としてのコマンド" }
+    ],
+    examples: [
+      { command: 'Invoke-Expression "Get-Process"', description: "文字列として組み立てたコマンドを実行する" },
+      { command: 'Invoke-Expression (Get-Content "script.ps1" -Raw)', description: "ファイルから読み込んだスクリプト文字列を実行する" }
+    ],
+    tags: ["文字列をコマンドとして実行", "動的実行", "eval"]
+  },
+  {
+    id: "add-type", name: "Add-Type", category: "scripting",
+    summary: ".NETアセンブリの読み込みや、C#などのコードから独自の型を定義する",
+    syntax: "Add-Type [-TypeDefinition] <string> | [-Path] <string> | [-AssemblyName] <string>",
+    parameters: [
+      { name: "-TypeDefinition", description: "C#などのソースコード文字列" },
+      { name: "-Path", description: "コンパイルするソースファイルのパス" },
+      { name: "-AssemblyName", description: "読み込む.NETアセンブリ名" }
+    ],
+    examples: [
+      { command: 'Add-Type -AssemblyName "System.Windows.Forms"', description: ".NETのアセンブリを読み込んで機能を追加する（メッセージボックス表示など）" },
+      { command: 'Add-Type -TypeDefinition "public class Sample { public static int Add(int a, int b){ return a+b; } }"', description: "C#のコードから独自の型を定義して使う" }
+    ],
+    tags: [".NETアセンブリ読み込み", "C#コードを使う", "型を追加"]
+  },
+  {
+    id: "set-strictmode", name: "Set-StrictMode", category: "scripting",
+    summary: "未定義の変数の使用などを検出する、厳格な検証モードを設定する",
+    syntax: "Set-StrictMode -Version <string>",
+    parameters: [
+      { name: "-Version", description: "適用するチェックの厳格さ（例: Latest, 2.0, 3.0）" }
+    ],
+    examples: [
+      { command: "Set-StrictMode -Version Latest", description: "未定義の変数を使うとエラーになるよう厳格な検証を有効にする" },
+      { command: "Set-StrictMode -Off", description: "厳格モードを解除する" }
+    ],
+    tags: ["厳格モード", "未定義変数の検出", "スクリプトの品質チェック"]
+  },
+  {
+    id: "measure-command", name: "Measure-Command", category: "scripting",
+    summary: "指定した処理の実行にかかった時間を計測する",
+    syntax: "Measure-Command [-Expression] <scriptblock>",
+    parameters: [
+      { name: "-Expression", description: "実行時間を計測したい処理" }
+    ],
+    examples: [
+      { command: "Measure-Command { Get-ChildItem -Recurse C:\\Windows }", description: "処理の実行時間を計測する" },
+      { command: "Measure-Command { 1..100000 | ForEach-Object { $_ * 2 } }", description: "ループ処理にかかる時間を確認する" }
+    ],
+    tags: ["実行時間計測", "処理速度を測る", "パフォーマンス確認"]
+  },
+
+  // ===== alias =====
+  {
+    id: "get-alias", name: "Get-Alias", aliases: ["gal"], category: "alias",
+    summary: "現在定義されているエイリアス（コマンドの別名）の一覧を取得する",
+    syntax: "Get-Alias [[-Name] <string[]>]",
+    parameters: [
+      { name: "-Name", description: "エイリアス名で絞り込む" }
+    ],
+    examples: [
+      { command: "Get-Alias", description: "現在定義されているすべてのエイリアス（別名）を一覧表示する" },
+      { command: "Get-Alias -Name gci", description: "特定のエイリアスが何のコマンドを指しているか確認する" }
+    ],
+    tags: ["エイリアス一覧", "別名確認", "短縮コマンド確認"]
+  },
+  {
+    id: "set-alias", name: "Set-Alias", aliases: ["sal"], category: "alias",
+    summary: "コマンドに別名（エイリアス）を設定する",
+    syntax: "Set-Alias [-Name] <string> [-Value] <string>",
+    parameters: [
+      { name: "-Name", description: "作成・変更するエイリアス名" },
+      { name: "-Value", description: "対応させる実際のコマンド名" }
+    ],
+    examples: [
+      { command: "Set-Alias -Name gp -Value Get-Process", description: "gpと入力するとGet-Processが実行されるようにする" },
+      { command: 'Set-Alias -Name np -Value "notepad.exe"', description: "よく使うアプリに短いエイリアスを付ける" }
+    ],
+    tags: ["エイリアス作成", "別名を設定", "短縮コマンドを作る"]
+  },
+  {
+    id: "new-alias", name: "New-Alias", category: "alias",
+    summary: "新しいエイリアス（別名）を作成する",
+    syntax: "New-Alias [-Name] <string> [-Value] <string>",
+    parameters: [
+      { name: "-Name", description: "新しいエイリアス名（既存の場合はエラーになる）" },
+      { name: "-Value", description: "対応するコマンド" }
+    ],
+    examples: [
+      { command: "New-Alias -Name ll -Value Get-ChildItem", description: "新しいエイリアスllを作成する（既に存在する場合はSet-Aliasを使う）" },
+      { command: "New-Alias -Name grep -Value Select-String", description: "よく使う別コマンドの感覚でgrepという名前を割り当てる" }
+    ],
+    tags: ["新しいエイリアス", "エイリアスを追加"]
+  },
+  {
+    id: "remove-alias", name: "Remove-Alias", category: "alias",
+    summary: "定義済みのエイリアス（別名）を削除する",
+    syntax: "Remove-Alias [-Name] <string[]>",
+    parameters: [
+      { name: "-Name", description: "削除するエイリアス名" }
+    ],
+    examples: [
+      { command: "Remove-Alias -Name ll", description: "作成したエイリアスを削除する" },
+      { command: "Get-Alias np; Remove-Alias -Name np", description: "エイリアスの内容を確認してから削除する" }
+    ],
+    tags: ["エイリアス削除", "別名を消す"]
+  },
+  {
+    id: "export-alias", name: "Export-Alias", category: "alias",
+    summary: "現在のエイリアス設定をファイルに書き出す",
+    syntax: "Export-Alias [-Path] <string>",
+    parameters: [
+      { name: "-Path", description: "保存先のファイルパス" }
+    ],
+    examples: [
+      { command: 'Export-Alias -Path "myaliases.ps1"', description: "現在のエイリアス設定をファイルに書き出す" },
+      { command: 'Export-Alias -Path "myaliases.csv" -As Csv', description: "CSV形式でエイリアス一覧を保存する" }
+    ],
+    tags: ["エイリアスをファイルに保存", "エイリアスのバックアップ"]
+  },
+  {
+    id: "import-alias", name: "Import-Alias", category: "alias",
+    summary: "ファイルに保存されたエイリアス定義を読み込む",
+    syntax: "Import-Alias [-Path] <string>",
+    parameters: [
+      { name: "-Path", description: "読み込むエイリアス定義ファイル" }
+    ],
+    examples: [
+      { command: 'Import-Alias -Path "myaliases.ps1"', description: "保存しておいたエイリアス定義を読み込む" },
+      { command: 'Import-Alias -Path "myaliases.csv"', description: "CSV形式で保存したエイリアスを復元する" }
+    ],
+    tags: ["エイリアスを読み込む", "エイリアスを復元"]
+  },
+
+  // ===== psdrive =====
+  {
+    id: "get-psdrive", name: "Get-PSDrive", category: "psdrive",
+    summary: "C:やHKCU:など、現在使用できるPSドライブの一覧を取得する",
+    syntax: "Get-PSDrive [[-Name] <string[]>]",
+    parameters: [
+      { name: "-Name", description: "ドライブ名で絞り込む" }
+    ],
+    examples: [
+      { command: "Get-PSDrive", description: "C:やHKCU:など、現在使用できるPSドライブの一覧を表示する" },
+      { command: "Get-PSDrive -PSProvider FileSystem", description: "ファイルシステム関連のドライブだけを表示する" }
+    ],
+    tags: ["ドライブ一覧", "PSドライブ確認"]
+  },
+  {
+    id: "new-psdrive", name: "New-PSDrive", category: "psdrive",
+    summary: "フォルダなどに新しい名前（仮想ドライブ）を割り当てる",
+    syntax: "New-PSDrive [-Name] <string> [-PSProvider] <string> [-Root] <string>",
+    parameters: [
+      { name: "-Name", description: "新しいドライブ名" },
+      { name: "-PSProvider", description: "プロバイダーの種類（例: FileSystem）" },
+      { name: "-Root", description: "実際のパス" }
+    ],
+    examples: [
+      { command: 'New-PSDrive -Name "Data" -PSProvider FileSystem -Root "D:\\Shared"', description: 'D:\\Sharedを「Data:」という名前の短いドライブとして使えるようにする' },
+      { command: 'New-PSDrive -Name "MyDocs" -PSProvider FileSystem -Root "$env:USERPROFILE\\Documents"', description: "よく使うフォルダに短い名前を付けてアクセスしやすくする" }
+    ],
+    tags: ["仮想ドライブ作成", "フォルダに別名を付ける", "ドライブを割り当てる"]
+  },
+  {
+    id: "remove-psdrive", name: "Remove-PSDrive", category: "psdrive",
+    summary: "作成した仮想ドライブ（PSドライブ）を削除する",
+    syntax: "Remove-PSDrive [-Name] <string[]>",
+    parameters: [
+      { name: "-Name", description: "削除するPSドライブ名" }
+    ],
+    examples: [
+      { command: 'Remove-PSDrive -Name "Data"', description: "作成した仮想ドライブを削除する" },
+      { command: 'Remove-PSDrive -Name "MyDocs" -Force', description: "使用中でも強制的に削除する" }
+    ],
+    tags: ["仮想ドライブ削除", "ドライブの割り当てを解除"]
+  },
+  {
+    id: "get-psprovider", name: "Get-PSProvider", category: "psdrive",
+    summary: "FileSystemやRegistryなど、利用可能なPSプロバイダーの一覧を取得する",
+    syntax: "Get-PSProvider [[-PSProvider] <string[]>]",
+    parameters: [
+      { name: "-PSProvider", description: "プロバイダー名で絞り込む" }
+    ],
+    examples: [
+      { command: "Get-PSProvider", description: "FileSystemやRegistryなど、利用可能なPSプロバイダーの一覧を表示する" },
+      { command: "Get-PSProvider -PSProvider Registry", description: "レジストリプロバイダーの詳細情報を確認する" }
+    ],
+    tags: ["プロバイダー一覧", "PSプロバイダー確認"]
+  },
+
+  // ===== scheduledtask =====
+  {
+    id: "get-scheduledtask", name: "Get-ScheduledTask", category: "scheduledtask",
+    summary: "タスクスケジューラに登録されているタスクの一覧を取得する",
+    syntax: "Get-ScheduledTask [[-TaskName] <string[]>]",
+    parameters: [
+      { name: "-TaskName", description: "タスク名で絞り込む" }
+    ],
+    examples: [
+      { command: "Get-ScheduledTask", description: "タスクスケジューラに登録されているタスクの一覧を表示する" },
+      { command: 'Get-ScheduledTask -TaskName "MyBackupTask"', description: "特定の名前のタスクの状態を確認する" }
+    ],
+    tags: ["タスク一覧", "スケジュールされたタスク確認", "タスクスケジューラ確認"]
+  },
+  {
+    id: "register-scheduledtask", name: "Register-ScheduledTask", category: "scheduledtask",
+    summary: "新しいタスクをタスクスケジューラに登録する",
+    syntax: "Register-ScheduledTask [-TaskName] <string> [-Action] <object> [-Trigger] <object>",
+    parameters: [
+      { name: "-TaskName", description: "登録するタスク名" },
+      { name: "-Action", description: "実行する内容（New-ScheduledTaskActionで作成）" },
+      { name: "-Trigger", description: "実行するタイミング（New-ScheduledTaskTriggerで作成）" }
+    ],
+    examples: [
+      { command: '$action = New-ScheduledTaskAction -Execute "notepad.exe"\n$trigger = New-ScheduledTaskTrigger -Daily -At 9am\nRegister-ScheduledTask -TaskName "DailyNotepad" -Action $action -Trigger $trigger', description: "毎日9時にメモ帳を起動するタスクを登録する" },
+      { command: 'Register-ScheduledTask -TaskName "Backup" -Xml (Get-Content "task.xml" -Raw)', description: "XMLファイルの定義からタスクを登録する" }
+    ],
+    tags: ["タスク登録", "定期実行の設定", "スケジュールタスク作成"]
+  },
+  {
+    id: "unregister-scheduledtask", name: "Unregister-ScheduledTask", category: "scheduledtask",
+    summary: "登録済みのタスクをタスクスケジューラから削除する",
+    syntax: "Unregister-ScheduledTask [-TaskName] <string> [-Confirm]",
+    parameters: [
+      { name: "-TaskName", description: "削除するタスク名" },
+      { name: "-Confirm", description: "削除前に確認する" }
+    ],
+    examples: [
+      { command: 'Unregister-ScheduledTask -TaskName "DailyNotepad" -Confirm:$false', description: "確認なしでタスクを削除する" },
+      { command: 'Get-ScheduledTask -TaskName "Old*" | Unregister-ScheduledTask -Confirm:$false', description: "名前がOldで始まる複数のタスクをまとめて削除する" }
+    ],
+    tags: ["タスク削除", "スケジュールタスクを消す"]
+  },
+  {
+    id: "start-scheduledtask", name: "Start-ScheduledTask", category: "scheduledtask",
+    summary: "登録済みのタスクを今すぐ手動で実行する",
+    syntax: "Start-ScheduledTask [-TaskName] <string>",
+    parameters: [
+      { name: "-TaskName", description: "実行するタスク名" }
+    ],
+    examples: [
+      { command: 'Start-ScheduledTask -TaskName "DailyNotepad"', description: "登録済みのタスクを今すぐ手動で実行する" },
+      { command: 'Get-ScheduledTask -TaskName "Backup" | Start-ScheduledTask', description: "パイプラインで取得したタスクをそのまま実行する" }
+    ],
+    tags: ["タスク実行", "タスクを今すぐ実行"]
+  },
+  {
+    id: "stop-scheduledtask", name: "Stop-ScheduledTask", category: "scheduledtask",
+    summary: "実行中のタスクを停止する",
+    syntax: "Stop-ScheduledTask [-TaskName] <string>",
+    parameters: [
+      { name: "-TaskName", description: "停止するタスク名" }
+    ],
+    examples: [
+      { command: 'Stop-ScheduledTask -TaskName "Backup"', description: "実行中のタスクを停止する" },
+      { command: 'Get-ScheduledTask -TaskName "Backup" | Stop-ScheduledTask', description: "パイプラインで取得したタスクを停止する" }
+    ],
+    tags: ["タスク停止", "実行中のタスクを止める"]
+  },
+  {
+    id: "enable-scheduledtask", name: "Enable-ScheduledTask", category: "scheduledtask",
+    summary: "無効化されているタスクを有効化する",
+    syntax: "Enable-ScheduledTask [-TaskName] <string>",
+    parameters: [
+      { name: "-TaskName", description: "有効化するタスク名" }
+    ],
+    examples: [
+      { command: 'Enable-ScheduledTask -TaskName "Backup"', description: "無効化されていたタスクを再度有効にする" },
+      { command: 'Get-ScheduledTask | Where-Object State -eq "Disabled" | Enable-ScheduledTask', description: "無効化されているタスクをまとめて有効化する" }
+    ],
+    tags: ["タスク有効化", "タスクを有効にする"]
+  },
+  {
+    id: "disable-scheduledtask", name: "Disable-ScheduledTask", category: "scheduledtask",
+    summary: "タスクを無効化して実行されないようにする",
+    syntax: "Disable-ScheduledTask [-TaskName] <string>",
+    parameters: [
+      { name: "-TaskName", description: "無効化するタスク名" }
+    ],
+    examples: [
+      { command: 'Disable-ScheduledTask -TaskName "Backup"', description: "タスクを無効化して実行されないようにする" },
+      { command: 'Get-ScheduledTask -TaskName "Old*" | Disable-ScheduledTask', description: "特定のタスクをまとめて無効化する" }
+    ],
+    tags: ["タスク無効化", "タスクを止める（削除せず）"]
+  },
+
+  // ===== firewall =====
+  {
+    id: "get-netfirewallrule", name: "Get-NetFirewallRule", category: "firewall",
+    summary: "Windowsファイアウォールのルールを取得する",
+    syntax: "Get-NetFirewallRule [[-DisplayName] <string[]>]",
+    parameters: [
+      { name: "-DisplayName", description: "ルール名で絞り込む" }
+    ],
+    examples: [
+      { command: 'Get-NetFirewallRule -DisplayName "*Remote Desktop*"', description: "リモートデスクトップ関連のファイアウォールルールを確認する" },
+      { command: "Get-NetFirewallRule | Where-Object Enabled -eq $true", description: "現在有効になっているルールだけを表示する" }
+    ],
+    tags: ["ファイアウォールルール確認", "ファイアウォール設定確認"]
+  },
+  {
+    id: "new-netfirewallrule", name: "New-NetFirewallRule", category: "firewall",
+    summary: "新しいファイアウォールルールを作成する",
+    syntax: "New-NetFirewallRule [-DisplayName] <string> [-Direction] <string> [-Action] <string> [-LocalPort <string>] [-Protocol <string>]",
+    parameters: [
+      { name: "-DisplayName", description: "ルール名" },
+      { name: "-Direction", description: '通信の方向（"Inbound"または"Outbound"）' },
+      { name: "-Action", description: '動作（"Allow"または"Block"）' },
+      { name: "-LocalPort", description: "対象のポート番号" }
+    ],
+    examples: [
+      { command: 'New-NetFirewallRule -DisplayName "Allow8080" -Direction Inbound -Action Allow -LocalPort 8080 -Protocol TCP', description: "8080番ポートへの通信を許可するルールを作成する" },
+      { command: 'New-NetFirewallRule -DisplayName "BlockApp" -Direction Outbound -Action Block -Program "C:\\App\\app.exe"', description: "特定のプログラムの外部通信をブロックする" }
+    ],
+    tags: ["ファイアウォールルール作成", "ポートを開放", "通信を許可", "通信をブロック"]
+  },
+  {
+    id: "set-netfirewallrule", name: "Set-NetFirewallRule", category: "firewall",
+    summary: "既存のファイアウォールルールの設定を変更する",
+    syntax: "Set-NetFirewallRule [-DisplayName] <string> [-Enabled <string>] [-Action <string>]",
+    parameters: [
+      { name: "-DisplayName", description: "変更するルール名" },
+      { name: "-Enabled", description: "ルールを有効/無効にする" },
+      { name: "-Action", description: "許可/ブロックの動作を変更する" }
+    ],
+    examples: [
+      { command: 'Set-NetFirewallRule -DisplayName "Allow8080" -Enabled False', description: "ルールを一時的に無効化する" },
+      { command: 'Set-NetFirewallRule -DisplayName "Allow8080" -Action Block', description: "ルールの動作を許可からブロックに変更する" }
+    ],
+    tags: ["ファイアウォールルール変更", "ルールの有効/無効切り替え"]
+  },
+  {
+    id: "remove-netfirewallrule", name: "Remove-NetFirewallRule", category: "firewall",
+    summary: "ファイアウォールルールを削除する",
+    syntax: "Remove-NetFirewallRule [-DisplayName] <string>",
+    parameters: [
+      { name: "-DisplayName", description: "削除するルール名" }
+    ],
+    examples: [
+      { command: 'Remove-NetFirewallRule -DisplayName "Allow8080"', description: "作成したファイアウォールルールを削除する" },
+      { command: 'Get-NetFirewallRule -DisplayName "Old*" | Remove-NetFirewallRule', description: "名前がOldで始まる複数のルールをまとめて削除する" }
+    ],
+    tags: ["ファイアウォールルール削除"]
+  },
+  {
+    id: "enable-netfirewallrule", name: "Enable-NetFirewallRule", category: "firewall",
+    summary: "無効になっているファイアウォールルールを有効化する",
+    syntax: "Enable-NetFirewallRule [-DisplayName] <string>",
+    parameters: [
+      { name: "-DisplayName", description: "有効化するルール名" }
+    ],
+    examples: [
+      { command: 'Enable-NetFirewallRule -DisplayName "Allow8080"', description: "無効になっているルールを有効化する" },
+      { command: 'Get-NetFirewallRule -DisplayGroup "リモート デスクトップ" | Enable-NetFirewallRule', description: "リモートデスクトップ関連のルールをまとめて有効化する" }
+    ],
+    tags: ["ファイアウォールルール有効化"]
+  },
+  {
+    id: "disable-netfirewallrule", name: "Disable-NetFirewallRule", category: "firewall",
+    summary: "ファイアウォールルールを一時的に無効化する",
+    syntax: "Disable-NetFirewallRule [-DisplayName] <string>",
+    parameters: [
+      { name: "-DisplayName", description: "無効化するルール名" }
+    ],
+    examples: [
+      { command: 'Disable-NetFirewallRule -DisplayName "Allow8080"', description: "ルールを一時的に無効化する" },
+      { command: 'Get-NetFirewallRule -DisplayGroup "リモート デスクトップ" | Disable-NetFirewallRule', description: "リモートデスクトップ関連のルールをまとめて無効化する" }
+    ],
+    tags: ["ファイアウォールルール無効化"]
+  },
+
+  // ===== disk =====
+  {
+    id: "get-disk", name: "Get-Disk", category: "disk",
+    summary: "このPCに接続されている物理ディスクの一覧を取得する",
+    syntax: "Get-Disk [[-Number] <int>]",
+    parameters: [
+      { name: "-Number", description: "ディスク番号で絞り込む" }
+    ],
+    examples: [
+      { command: "Get-Disk", description: "このPCに接続されているディスクの一覧を表示する" },
+      { command: "Get-Disk -Number 0", description: "特定のディスク（0番）の詳細を確認する" }
+    ],
+    tags: ["ディスク一覧", "物理ディスク確認"]
+  },
+  {
+    id: "get-partition", name: "Get-Partition", category: "disk",
+    summary: "ディスクのパーティション一覧を取得する",
+    syntax: "Get-Partition [[-DiskNumber] <int>]",
+    parameters: [
+      { name: "-DiskNumber", description: "対象ディスク番号" }
+    ],
+    examples: [
+      { command: "Get-Partition", description: "すべてのディスクのパーティション一覧を表示する" },
+      { command: "Get-Partition -DiskNumber 0", description: "特定のディスクのパーティションだけを表示する" }
+    ],
+    tags: ["パーティション一覧", "パーティション確認"]
+  },
+  {
+    id: "get-volume", name: "Get-Volume", category: "disk",
+    summary: "各ドライブの空き容量・使用状況（ボリューム情報）を取得する",
+    syntax: "Get-Volume [[-DriveLetter] <string>]",
+    parameters: [
+      { name: "-DriveLetter", description: "ドライブ文字で絞り込む（例: C）" }
+    ],
+    examples: [
+      { command: "Get-Volume", description: "すべてのドライブの空き容量・使用状況を表示する" },
+      { command: "Get-Volume -DriveLetter C", description: "Cドライブの空き容量を確認する" }
+    ],
+    tags: ["ドライブ容量確認", "空き容量確認", "ボリューム確認"]
+  },
+  {
+    id: "format-volume", name: "Format-Volume", category: "disk",
+    summary: "ドライブをフォーマットする（データはすべて消去される）",
+    syntax: "Format-Volume [-DriveLetter] <string> [-FileSystem] <string>",
+    parameters: [
+      { name: "-DriveLetter", description: "フォーマットするドライブ" },
+      { name: "-FileSystem", description: "ファイルシステム（例: NTFS）" }
+    ],
+    examples: [
+      { command: "Format-Volume -DriveLetter D -FileSystem NTFS", description: "DドライブをNTFS形式でフォーマットする（データはすべて消去される）" },
+      { command: "Format-Volume -DriveLetter E -FileSystem exFAT -Confirm:$false", description: "確認なしでexFAT形式にフォーマットする" }
+    ],
+    tags: ["ドライブフォーマット", "ボリュームの初期化"]
+  },
+  {
+    id: "get-physicaldisk", name: "Get-PhysicalDisk", category: "disk",
+    summary: "SSD/HDDなど物理ディスクの種類や健康状態を取得する",
+    syntax: "Get-PhysicalDisk [[-FriendlyName] <string[]>]",
+    parameters: [
+      { name: "-FriendlyName", description: "ディスク名で絞り込む" }
+    ],
+    examples: [
+      { command: "Get-PhysicalDisk", description: "SSD/HDDなど物理ディスクの種類や状態を確認する" },
+      { command: "Get-PhysicalDisk | Select-Object FriendlyName, MediaType, HealthStatus", description: "ディスクの種類（SSD/HDD）と健康状態を確認する" }
+    ],
+    tags: ["物理ディスク確認", "SSD確認", "ディスクの健康状態"]
+  },
+  {
+    id: "new-partition", name: "New-Partition", category: "disk",
+    summary: "ディスクに新しいパーティションを作成する",
+    syntax: "New-Partition [-DiskNumber] <int> [-Size <uint64>] [-UseMaximumSize]",
+    parameters: [
+      { name: "-DiskNumber", description: "対象ディスク" },
+      { name: "-Size", description: "作成するサイズ" },
+      { name: "-UseMaximumSize", description: "残りすべての容量を使う" }
+    ],
+    examples: [
+      { command: "New-Partition -DiskNumber 1 -UseMaximumSize", description: "ディスクの空き容量すべてを使って新しいパーティションを作成する" },
+      { command: "New-Partition -DiskNumber 1 -Size 100GB", description: "100GBの新しいパーティションを作成する" }
+    ],
+    tags: ["パーティション作成", "新しいドライブを作る"]
+  },
+  {
+    id: "resize-partition", name: "Resize-Partition", category: "disk",
+    summary: "既存のパーティションのサイズを変更する",
+    syntax: "Resize-Partition [-DriveLetter] <string> [-Size <uint64>]",
+    parameters: [
+      { name: "-DriveLetter", description: "対象ドライブ" },
+      { name: "-Size", description: "変更後のサイズ" }
+    ],
+    examples: [
+      { command: "Resize-Partition -DriveLetter D -Size 50GB", description: "パーティションのサイズを50GBに変更する" },
+      { command: "Get-PartitionSupportedSize -DriveLetter D", description: "（参考）変更可能なサイズの範囲を確認してからResize-Partitionを使う" }
+    ],
+    tags: ["パーティションサイズ変更", "ドライブの容量を変更"]
+  },
+  {
+    id: "optimize-volume", name: "Optimize-Volume", category: "disk",
+    summary: "ドライブのデフラグやSSD向けの最適化（Trim）を実行する",
+    syntax: "Optimize-Volume [-DriveLetter] <string> [-Defrag] [-ReTrim]",
+    parameters: [
+      { name: "-DriveLetter", description: "対象ドライブ" },
+      { name: "-Defrag", description: "デフラグを実行する（HDD向け）" },
+      { name: "-ReTrim", description: "SSD向けのTrim処理を実行する" }
+    ],
+    examples: [
+      { command: "Optimize-Volume -DriveLetter C -Defrag", description: "Cドライブのデフラグを実行する（HDD向け）" },
+      { command: "Optimize-Volume -DriveLetter C -ReTrim", description: "SSD向けの最適化（Trim）を実行する" }
+    ],
+    tags: ["デフラグ", "ディスク最適化", "SSD最適化"]
+  },
+
+  // ===== localaccount =====
+  {
+    id: "get-localuser", name: "Get-LocalUser", category: "localaccount",
+    summary: "このPCに登録されているローカルユーザーの一覧を取得する",
+    syntax: "Get-LocalUser [[-Name] <string[]>]",
+    parameters: [
+      { name: "-Name", description: "ユーザー名で絞り込む" }
+    ],
+    examples: [
+      { command: "Get-LocalUser", description: "このPCに登録されているローカルユーザーの一覧を表示する" },
+      { command: 'Get-LocalUser -Name "Guest"', description: "Guestアカウントの状態（有効/無効）を確認する" }
+    ],
+    tags: ["ローカルユーザー一覧", "ユーザーアカウント確認"]
+  },
+  {
+    id: "new-localuser", name: "New-LocalUser", category: "localaccount",
+    summary: "新しいローカルユーザーアカウントを作成する",
+    syntax: "New-LocalUser [-Name] <string> [-Password <securestring>] [-FullName <string>]",
+    parameters: [
+      { name: "-Name", description: "作成するユーザー名" },
+      { name: "-Password", description: "パスワード" },
+      { name: "-FullName", description: "表示名" }
+    ],
+    examples: [
+      { command: 'New-LocalUser -Name "testuser" -Password (Read-Host -AsSecureString "パスワード")', description: "新しいローカルユーザーを作成する" },
+      { command: 'New-LocalUser -Name "testuser" -NoPassword', description: "パスワードなしのユーザーを作成する" }
+    ],
+    tags: ["ユーザー作成", "新しいアカウントを作る"]
+  },
+  {
+    id: "remove-localuser", name: "Remove-LocalUser", category: "localaccount",
+    summary: "ローカルユーザーアカウントを削除する",
+    syntax: "Remove-LocalUser [-Name] <string>",
+    parameters: [
+      { name: "-Name", description: "削除するユーザー名" }
+    ],
+    examples: [
+      { command: 'Remove-LocalUser -Name "testuser"', description: "ローカルユーザーを削除する" },
+      { command: 'Get-LocalUser -Name "temp*" | Remove-LocalUser', description: "名前がtempで始まるユーザーをまとめて削除する" }
+    ],
+    tags: ["ユーザー削除", "アカウントを消す"]
+  },
+  {
+    id: "set-localuser", name: "Set-LocalUser", category: "localaccount",
+    summary: "ローカルユーザーの設定（パスワードや表示名など）を変更する",
+    syntax: "Set-LocalUser [-Name] <string> [-Password <securestring>] [-AccountNeverExpires]",
+    parameters: [
+      { name: "-Name", description: "対象ユーザー名" },
+      { name: "-Password", description: "新しいパスワード" },
+      { name: "-AccountNeverExpires", description: "アカウントを無期限にする" }
+    ],
+    examples: [
+      { command: 'Set-LocalUser -Name "testuser" -Password (Read-Host -AsSecureString "新しいパスワード")', description: "ユーザーのパスワードを変更する" },
+      { command: 'Set-LocalUser -Name "testuser" -FullName "テストユーザー"', description: "ユーザーの表示名を変更する" }
+    ],
+    tags: ["ユーザー設定変更", "パスワード変更", "アカウント編集"]
+  },
+  {
+    id: "get-localgroup", name: "Get-LocalGroup", category: "localaccount",
+    summary: "Administratorsなど、このPCのローカルグループの一覧を取得する",
+    syntax: "Get-LocalGroup [[-Name] <string[]>]",
+    parameters: [
+      { name: "-Name", description: "グループ名で絞り込む" }
+    ],
+    examples: [
+      { command: "Get-LocalGroup", description: "Administratorsなど、このPCのローカルグループ一覧を表示する" },
+      { command: 'Get-LocalGroup -Name "Administrators"', description: "管理者グループの情報を確認する" }
+    ],
+    tags: ["ローカルグループ一覧", "グループ確認"]
+  },
+  {
+    id: "new-localgroup", name: "New-LocalGroup", category: "localaccount",
+    summary: "新しいローカルグループを作成する",
+    syntax: "New-LocalGroup [-Name] <string> [-Description <string>]",
+    parameters: [
+      { name: "-Name", description: "作成するグループ名" },
+      { name: "-Description", description: "説明" }
+    ],
+    examples: [
+      { command: 'New-LocalGroup -Name "ProjectTeam"', description: "新しいローカルグループを作成する" },
+      { command: 'New-LocalGroup -Name "ProjectTeam" -Description "プロジェクト用グループ"', description: "説明付きでグループを作成する" }
+    ],
+    tags: ["グループ作成", "新しいグループを作る"]
+  },
+  {
+    id: "add-localgroupmember", name: "Add-LocalGroupMember", category: "localaccount",
+    summary: "ローカルグループにユーザーを追加する",
+    syntax: "Add-LocalGroupMember [-Group] <string> [-Member] <string[]>",
+    parameters: [
+      { name: "-Group", description: "対象グループ名" },
+      { name: "-Member", description: "追加するユーザー名" }
+    ],
+    examples: [
+      { command: 'Add-LocalGroupMember -Group "Administrators" -Member "testuser"', description: "ユーザーを管理者グループに追加する" },
+      { command: 'Add-LocalGroupMember -Group "ProjectTeam" -Member "user1","user2"', description: "複数のユーザーを一度にグループに追加する" }
+    ],
+    tags: ["グループにメンバー追加", "ユーザーをグループに入れる", "管理者権限を付与"]
+  },
+  {
+    id: "remove-localgroupmember", name: "Remove-LocalGroupMember", category: "localaccount",
+    summary: "ローカルグループからユーザーを削除する",
+    syntax: "Remove-LocalGroupMember [-Group] <string> [-Member] <string[]>",
+    parameters: [
+      { name: "-Group", description: "対象グループ名" },
+      { name: "-Member", description: "削除するユーザー名" }
+    ],
+    examples: [
+      { command: 'Remove-LocalGroupMember -Group "Administrators" -Member "testuser"', description: "ユーザーを管理者グループから外す" },
+      { command: 'Remove-LocalGroupMember -Group "ProjectTeam" -Member "user1"', description: "グループからメンバーを削除する" }
+    ],
+    tags: ["グループからメンバー削除", "権限を外す"]
+  },
+  {
+    id: "get-localgroupmember", name: "Get-LocalGroupMember", category: "localaccount",
+    summary: "ローカルグループに所属しているメンバーの一覧を取得する",
+    syntax: "Get-LocalGroupMember [-Group] <string>",
+    parameters: [
+      { name: "-Group", description: "確認するグループ名" }
+    ],
+    examples: [
+      { command: 'Get-LocalGroupMember -Group "Administrators"', description: "管理者グループに所属しているユーザーの一覧を表示する" },
+      { command: 'Get-LocalGroupMember -Group "ProjectTeam"', description: "特定のグループのメンバー一覧を確認する" }
+    ],
+    tags: ["グループメンバー確認", "誰が管理者か確認"]
+  },
+
+  // ===== dnsclient =====
+  {
+    id: "get-dnsclientcache", name: "Get-DnsClientCache", category: "dnsclient",
+    summary: "このPCにキャッシュされているDNS解決結果を取得する",
+    syntax: "Get-DnsClientCache",
+    parameters: [],
+    examples: [
+      { command: "Get-DnsClientCache", description: "このPCにキャッシュされているDNS解決結果を表示する" },
+      { command: 'Get-DnsClientCache | Where-Object Entry -like "*example.com*"', description: "特定のドメインのキャッシュだけを確認する" }
+    ],
+    tags: ["DNSキャッシュ確認"]
+  },
+  {
+    id: "clear-dnsclientcache", name: "Clear-DnsClientCache", category: "dnsclient",
+    summary: "DNSキャッシュをすべて消去する（ipconfig /flushdnsに相当）",
+    syntax: "Clear-DnsClientCache",
+    parameters: [],
+    examples: [
+      { command: "Clear-DnsClientCache", description: "DNSキャッシュをすべて消去する（ipconfig /flushdnsに相当）" },
+      { command: "Clear-DnsClientCache; Get-DnsClientCache", description: "キャッシュを消去してから空になったことを確認する" }
+    ],
+    tags: ["DNSキャッシュクリア", "flushdns", "キャッシュをクリア"]
+  },
+  {
+    id: "get-dnsclientserveraddress", name: "Get-DnsClientServerAddress", category: "dnsclient",
+    summary: "ネットワークアダプターに設定されているDNSサーバーを取得する",
+    syntax: "Get-DnsClientServerAddress [[-InterfaceAlias] <string>]",
+    parameters: [
+      { name: "-InterfaceAlias", description: "対象のネットワークアダプター名" }
+    ],
+    examples: [
+      { command: "Get-DnsClientServerAddress", description: "各ネットワークアダプターに設定されているDNSサーバーを表示する" },
+      { command: 'Get-DnsClientServerAddress -InterfaceAlias "イーサネット"', description: "特定のアダプターのDNS設定を確認する" }
+    ],
+    tags: ["DNSサーバー確認", "DNS設定確認"]
+  },
+  {
+    id: "set-dnsclientserveraddress", name: "Set-DnsClientServerAddress", category: "dnsclient",
+    summary: "ネットワークアダプターのDNSサーバーを変更する",
+    syntax: "Set-DnsClientServerAddress [-InterfaceAlias] <string> [-ServerAddresses] <string[]>",
+    parameters: [
+      { name: "-InterfaceAlias", description: "対象アダプター" },
+      { name: "-ServerAddresses", description: "設定するDNSサーバーのIPアドレス" }
+    ],
+    examples: [
+      { command: 'Set-DnsClientServerAddress -InterfaceAlias "イーサネット" -ServerAddresses "8.8.8.8","8.8.4.4"', description: "DNSサーバーをGoogle Public DNSに変更する" },
+      { command: 'Set-DnsClientServerAddress -InterfaceAlias "イーサネット" -ResetServerAddresses', description: "DNS設定を自動取得（DHCP）に戻す" }
+    ],
+    tags: ["DNSサーバー変更", "DNS設定変更"]
+  },
+
+  // ===== network (追加) =====
+  {
+    id: "new-netipaddress", name: "New-NetIPAddress", category: "network",
+    summary: "ネットワークアダプターに固定IPアドレスを設定する",
+    syntax: "New-NetIPAddress [-InterfaceAlias] <string> [-IPAddress] <string> [-PrefixLength <int>]",
+    parameters: [
+      { name: "-InterfaceAlias", description: "対象アダプター" },
+      { name: "-IPAddress", description: "設定するIPアドレス" },
+      { name: "-PrefixLength", description: "サブネットマスクの長さ（例: 24）" }
+    ],
+    examples: [
+      { command: 'New-NetIPAddress -InterfaceAlias "イーサネット" -IPAddress "192.168.1.100" -PrefixLength 24', description: "固定IPアドレスを設定する" },
+      { command: 'New-NetIPAddress -InterfaceAlias "イーサネット" -IPAddress "192.168.1.100" -PrefixLength 24 -DefaultGateway "192.168.1.1"', description: "デフォルトゲートウェイも同時に設定する" }
+    ],
+    tags: ["固定IP設定", "IPアドレスを設定"]
+  },
+  {
+    id: "remove-netipaddress", name: "Remove-NetIPAddress", category: "network",
+    summary: "設定した固定IPアドレスを削除する",
+    syntax: "Remove-NetIPAddress [-InterfaceAlias] <string> [-IPAddress] <string>",
+    parameters: [
+      { name: "-InterfaceAlias", description: "対象アダプター" },
+      { name: "-IPAddress", description: "削除するIPアドレス" }
+    ],
+    examples: [
+      { command: 'Remove-NetIPAddress -InterfaceAlias "イーサネット" -IPAddress "192.168.1.100"', description: "設定した固定IPアドレスを削除する" },
+      { command: 'Remove-NetIPAddress -InterfaceAlias "イーサネット" -IPAddress "192.168.1.100" -Confirm:$false', description: "確認なしでIPアドレス設定を削除する" }
+    ],
+    tags: ["IPアドレス削除", "固定IPを解除"]
+  },
+  {
+    id: "get-netroute", name: "Get-NetRoute", category: "network",
+    summary: "このPCのルーティングテーブル（経路情報）を取得する",
+    syntax: "Get-NetRoute [[-InterfaceAlias] <string>]",
+    parameters: [
+      { name: "-InterfaceAlias", description: "対象アダプター" }
+    ],
+    examples: [
+      { command: "Get-NetRoute", description: "このPCのルーティングテーブルを表示する" },
+      { command: 'Get-NetRoute -DestinationPrefix "0.0.0.0/0"', description: "デフォルトゲートウェイの設定を確認する" }
+    ],
+    tags: ["ルーティングテーブル確認", "route print"]
+  },
+  {
+    id: "new-netroute", name: "New-NetRoute", category: "network",
+    summary: "新しいルート（通信経路）を追加する",
+    syntax: "New-NetRoute [-InterfaceAlias] <string> [-DestinationPrefix] <string> [-NextHop <string>]",
+    parameters: [
+      { name: "-InterfaceAlias", description: "対象アダプター" },
+      { name: "-DestinationPrefix", description: "宛先ネットワーク（例: 10.0.0.0/24）" },
+      { name: "-NextHop", description: "ゲートウェイアドレス" }
+    ],
+    examples: [
+      { command: 'New-NetRoute -InterfaceAlias "イーサネット" -DestinationPrefix "10.0.0.0/24" -NextHop "192.168.1.254"', description: "特定のネットワーク宛の経路（ルート）を追加する" },
+      { command: 'New-NetRoute -InterfaceAlias "イーサネット" -DestinationPrefix "0.0.0.0/0" -NextHop "192.168.1.1"', description: "デフォルトゲートウェイを追加する" }
+    ],
+    tags: ["ルート追加", "経路を追加"]
+  },
+  {
+    id: "remove-netroute", name: "Remove-NetRoute", category: "network",
+    summary: "追加したルート（通信経路）を削除する",
+    syntax: "Remove-NetRoute [-InterfaceAlias] <string> [-DestinationPrefix] <string>",
+    parameters: [
+      { name: "-InterfaceAlias", description: "対象アダプター" },
+      { name: "-DestinationPrefix", description: "削除する宛先ネットワーク" }
+    ],
+    examples: [
+      { command: 'Remove-NetRoute -InterfaceAlias "イーサネット" -DestinationPrefix "10.0.0.0/24"', description: "追加した経路を削除する" },
+      { command: 'Remove-NetRoute -DestinationPrefix "10.0.0.0/24" -Confirm:$false', description: "確認なしで経路を削除する" }
+    ],
+    tags: ["ルート削除", "経路を削除"]
+  },
+  {
+    id: "disable-netadapter", name: "Disable-NetAdapter", category: "network",
+    summary: "ネットワークアダプターを無効化する",
+    syntax: "Disable-NetAdapter [-Name] <string>",
+    parameters: [
+      { name: "-Name", description: "対象アダプター名" }
+    ],
+    examples: [
+      { command: 'Disable-NetAdapter -Name "イーサネット" -Confirm:$false', description: "ネットワークアダプターを無効化する" },
+      { command: 'Get-NetAdapter | Where-Object Status -eq "Disconnected" | Disable-NetAdapter -Confirm:$false', description: "切断状態のアダプターをまとめて無効化する" }
+    ],
+    tags: ["アダプター無効化", "ネットワークを切る"]
+  },
+  {
+    id: "enable-netadapter", name: "Enable-NetAdapter", category: "network",
+    summary: "無効化されているネットワークアダプターを有効化する",
+    syntax: "Enable-NetAdapter [-Name] <string>",
+    parameters: [
+      { name: "-Name", description: "対象アダプター名" }
+    ],
+    examples: [
+      { command: 'Enable-NetAdapter -Name "イーサネット" -Confirm:$false', description: "無効化されているアダプターを有効化する" },
+      { command: 'Get-NetAdapter | Where-Object Status -eq "Disabled" | Enable-NetAdapter -Confirm:$false', description: "無効なアダプターをまとめて有効化する" }
+    ],
+    tags: ["アダプター有効化", "ネットワークをつなぐ"]
+  },
+  {
+    id: "restart-netadapter", name: "Restart-NetAdapter", category: "network",
+    summary: "ネットワークアダプターを再起動する（無効化してから有効化する）",
+    syntax: "Restart-NetAdapter [-Name] <string>",
+    parameters: [
+      { name: "-Name", description: "対象アダプター名" }
+    ],
+    examples: [
+      { command: 'Restart-NetAdapter -Name "イーサネット"', description: "ネットワークアダプターを無効化→有効化して再起動する" },
+      { command: 'Restart-NetAdapter -Name "Wi-Fi" -Confirm:$false', description: "Wi-Fiアダプターを確認なしで再起動する" }
+    ],
+    tags: ["アダプター再起動", "ネットワークをリセット"]
+  },
+  {
+    id: "rename-netadapter", name: "Rename-NetAdapter", category: "network",
+    summary: "ネットワークアダプターの表示名を変更する",
+    syntax: "Rename-NetAdapter [-Name] <string> [-NewName] <string>",
+    parameters: [
+      { name: "-Name", description: "現在の名前" },
+      { name: "-NewName", description: "新しい名前" }
+    ],
+    examples: [
+      { command: 'Rename-NetAdapter -Name "イーサネット" -NewName "LAN"', description: "アダプターの表示名を分かりやすい名前に変更する" },
+      { command: 'Get-NetAdapter | Rename-NetAdapter -NewName "Main"', description: "パイプラインで取得したアダプターの名前を変更する" }
+    ],
+    tags: ["アダプター名変更", "ネットワーク名を変える"]
+  },
+
+  // ===== printer =====
+  {
+    id: "get-printer", name: "Get-Printer", category: "printer",
+    summary: "このPCに登録されているプリンターの一覧を取得する",
+    syntax: "Get-Printer [[-Name] <string[]>]",
+    parameters: [
+      { name: "-Name", description: "プリンター名で絞り込む" }
+    ],
+    examples: [
+      { command: "Get-Printer", description: "このPCに登録されているプリンターの一覧を表示する" },
+      { command: 'Get-Printer -Name "*PDF*"', description: "名前にPDFを含むプリンター（仮想プリンターなど）を検索する" }
+    ],
+    tags: ["プリンター一覧", "プリンター確認"]
+  },
+  {
+    id: "add-printer", name: "Add-Printer", category: "printer",
+    summary: "新しいプリンターを追加する",
+    syntax: "Add-Printer [-Name] <string> [-DriverName <string>] [-PortName <string>]",
+    parameters: [
+      { name: "-Name", description: "プリンター名" },
+      { name: "-DriverName", description: "使用するドライバー名" },
+      { name: "-PortName", description: "接続するポート" }
+    ],
+    examples: [
+      { command: 'Add-Printer -Name "OfficePrinter" -DriverName "HP Universal Printing PCL 6" -PortName "IP_192.168.1.50"', description: "ネットワークプリンターを追加する" },
+      { command: 'Add-Printer -ConnectionName "\\\\Server\\SharedPrinter"', description: "共有プリンターに接続する" }
+    ],
+    tags: ["プリンター追加", "プリンターを設定"]
+  },
+  {
+    id: "remove-printer", name: "Remove-Printer", category: "printer",
+    summary: "登録済みのプリンターを削除する",
+    syntax: "Remove-Printer [-Name] <string>",
+    parameters: [
+      { name: "-Name", description: "削除するプリンター名" }
+    ],
+    examples: [
+      { command: 'Remove-Printer -Name "OfficePrinter"', description: "登録済みのプリンターを削除する" },
+      { command: 'Get-Printer -Name "Old*" | Remove-Printer', description: "名前がOldで始まるプリンターをまとめて削除する" }
+    ],
+    tags: ["プリンター削除", "プリンターを消す"]
+  },
+
+  // ===== module (追加：パッケージ管理) =====
+  {
+    id: "get-package", name: "Get-Package", category: "module",
+    summary: "PackageManagementで管理されているパッケージの一覧を取得する",
+    syntax: "Get-Package [[-Name] <string>]",
+    parameters: [
+      { name: "-Name", description: "パッケージ名で絞り込む" }
+    ],
+    examples: [
+      { command: "Get-Package", description: "PackageManagementで管理されているパッケージの一覧を表示する" },
+      { command: 'Get-Package -Name "Az*"', description: "名前がAzで始まるパッケージを検索する" }
+    ],
+    tags: ["パッケージ一覧", "インストール済みパッケージ確認"]
+  },
+  {
+    id: "find-package", name: "Find-Package", category: "module",
+    summary: "インストール可能なパッケージを検索する",
+    syntax: "Find-Package [-Name] <string>",
+    parameters: [
+      { name: "-Name", description: "検索するパッケージ名" }
+    ],
+    examples: [
+      { command: 'Find-Package -Name "7zip"', description: "利用可能なパッケージを検索する" },
+      { command: 'Find-Package -Name "7zip" -Source "chocolatey"', description: "特定のパッケージソースから検索する" }
+    ],
+    tags: ["パッケージ検索"]
+  },
+  {
+    id: "install-package", name: "Install-Package", category: "module",
+    summary: "パッケージをインストールする",
+    syntax: "Install-Package [-Name] <string>",
+    parameters: [
+      { name: "-Name", description: "インストールするパッケージ名" }
+    ],
+    examples: [
+      { command: 'Install-Package -Name "7zip"', description: "パッケージをインストールする" },
+      { command: 'Install-Package -Name "7zip" -Force', description: "確認なしで強制的にインストールする" }
+    ],
+    tags: ["パッケージインストール"]
+  },
+  {
+    id: "uninstall-package", name: "Uninstall-Package", category: "module",
+    summary: "インストールしたパッケージを削除する",
+    syntax: "Uninstall-Package [-Name] <string>",
+    parameters: [
+      { name: "-Name", description: "削除するパッケージ名" }
+    ],
+    examples: [
+      { command: 'Uninstall-Package -Name "7zip"', description: "インストールしたパッケージを削除する" },
+      { command: 'Get-Package -Name "Old*" | Uninstall-Package', description: "名前がOldで始まるパッケージをまとめて削除する" }
+    ],
+    tags: ["パッケージ削除", "アンインストール"]
+  },
+
+  // ===== remoting (追加) =====
+  {
+    id: "enable-psremoting", name: "Enable-PSRemoting", category: "remoting",
+    summary: "このPCへのPowerShellリモート接続を有効にする",
+    syntax: "Enable-PSRemoting [-Force]",
+    parameters: [
+      { name: "-Force", description: "確認なしで実行する" }
+    ],
+    examples: [
+      { command: "Enable-PSRemoting -Force", description: "このPCへのPowerShellリモート接続を有効にする" },
+      { command: "Enable-PSRemoting -SkipNetworkProfileCheck", description: "ネットワークプロファイルの確認をスキップして有効化する" }
+    ],
+    tags: ["リモート接続を有効化", "PSRemoting設定"]
+  },
+  {
+    id: "disable-psremoting", name: "Disable-PSRemoting", category: "remoting",
+    summary: "このPCへのリモート接続を無効化する",
+    syntax: "Disable-PSRemoting [-Force]",
+    parameters: [
+      { name: "-Force", description: "確認なしで実行する" }
+    ],
+    examples: [
+      { command: "Disable-PSRemoting -Force", description: "このPCへのリモート接続を無効化する" },
+      { command: "Disable-PSRemoting", description: "確認を求めながらリモート接続を無効化する" }
+    ],
+    tags: ["リモート接続を無効化"]
+  },
+  {
+    id: "test-wsman", name: "Test-WSMan", category: "remoting",
+    summary: "リモート管理（WinRM）が有効かどうかを確認する",
+    syntax: "Test-WSMan [[-ComputerName] <string>]",
+    parameters: [
+      { name: "-ComputerName", description: "接続確認する相手のPC名" }
+    ],
+    examples: [
+      { command: "Test-WSMan -ComputerName Server01", description: "リモート管理（WinRM）が有効かどうかを確認する" },
+      { command: "Test-WSMan", description: "ローカルPCのWinRMサービスが動作しているか確認する" }
+    ],
+    tags: ["WinRM確認", "リモート管理の疎通確認"]
+  },
+
+  // ===== system (追加) =====
+  {
+    id: "clear-host", name: "Clear-Host", aliases: ["cls", "clear"], category: "system",
+    summary: "コンソール画面の表示内容をすべて消去する",
+    syntax: "Clear-Host",
+    parameters: [],
+    examples: [
+      { command: "Clear-Host", description: "コンソール画面の表示内容をすべて消去する（clsと同じ）" },
+      { command: "cls", description: "Clear-Hostの組み込みエイリアスを使って画面をクリアする" }
+    ],
+    tags: ["画面クリア", "cls", "画面を消す"]
+  },
+  {
+    id: "get-timezone", name: "Get-TimeZone", category: "system",
+    summary: "現在設定されているタイムゾーンを取得する",
+    syntax: "Get-TimeZone [-ListAvailable]",
+    parameters: [
+      { name: "-ListAvailable", description: "設定可能なタイムゾーンを一覧表示する" }
+    ],
+    examples: [
+      { command: "Get-TimeZone", description: "現在設定されているタイムゾーンを表示する" },
+      { command: "Get-TimeZone -ListAvailable", description: "設定可能なタイムゾーンの一覧を表示する" }
+    ],
+    tags: ["タイムゾーン確認"]
+  },
+  {
+    id: "set-timezone", name: "Set-TimeZone", category: "system",
+    summary: "システムのタイムゾーンを変更する",
+    syntax: "Set-TimeZone [-Id] <string>",
+    parameters: [
+      { name: "-Id", description: '設定するタイムゾーンのID（例: "Tokyo Standard Time"）' }
+    ],
+    examples: [
+      { command: 'Set-TimeZone -Id "Tokyo Standard Time"', description: "タイムゾーンを日本標準時に設定する" },
+      { command: 'Get-TimeZone -ListAvailable | Where-Object Id -like "*Tokyo*"', description: "設定したいタイムゾーンのIDを検索してから設定する" }
+    ],
+    tags: ["タイムゾーン変更", "時刻設定"]
+  },
+  {
+    id: "get-uiculture", name: "Get-UICulture", category: "system",
+    summary: "PowerShellの表示言語（UIカルチャ）設定を取得する",
+    syntax: "Get-UICulture",
+    parameters: [],
+    examples: [
+      { command: "Get-UICulture", description: "PowerShellの表示言語（UIカルチャ）設定を確認する" },
+      { command: "(Get-UICulture).Name", description: "言語コード（例: ja-JP）だけを取得する" }
+    ],
+    tags: ["表示言語確認", "UIカルチャ確認"]
+  },
+  {
+    id: "start-sleep", name: "Start-Sleep", aliases: ["sleep"], category: "system",
+    summary: "指定した時間だけ処理を一時停止する",
+    syntax: "Start-Sleep [-Seconds] <int>",
+    parameters: [
+      { name: "-Seconds", description: "待機する秒数" },
+      { name: "-Milliseconds", description: "待機するミリ秒数" }
+    ],
+    examples: [
+      { command: "Start-Sleep -Seconds 5", description: "5秒間処理を一時停止する" },
+      { command: "1..3 | ForEach-Object { Write-Host $_; Start-Sleep -Seconds 1 }", description: "1秒ごとにカウントを表示する" }
+    ],
+    tags: ["待機", "一時停止", "スリープ"]
+  },
+  {
+    id: "get-wmiobject", name: "Get-WmiObject", category: "system",
+    summary: "WMI（旧方式）を使ってPCのシステム情報を取得する",
+    syntax: "Get-WmiObject [-Class] <string>",
+    parameters: [
+      { name: "-Class", description: "取得するWMIクラス名" }
+    ],
+    examples: [
+      { command: "Get-WmiObject -Class Win32_OperatingSystem", description: "OS情報をWMI経由で取得する（Get-CimInstanceの旧方式）" },
+      { command: "Get-WmiObject -Class Win32_BIOS", description: "BIOS情報を取得する" }
+    ],
+    tags: ["WMI情報取得（旧方式）", "レガシーWMIコマンド"]
+  },
+
+  // ===== dataio (追加) =====
+  {
+    id: "format-hex", name: "Format-Hex", category: "dataio",
+    summary: "ファイルや文字列の内容を16進数（バイナリ）表示にする",
+    syntax: "Format-Hex [-Path] <string>",
+    parameters: [
+      { name: "-Path", description: "対象ファイルのパス" }
+    ],
+    examples: [
+      { command: 'Format-Hex -Path "sample.bin"', description: "ファイルの内容を16進数（バイナリ）表示する" },
+      { command: '"abc" | Format-Hex', description: "文字列をバイト単位の16進数表示に変換する" }
+    ],
+    tags: ["16進数表示", "バイナリを見る", "hexdump"]
+  },
+  {
+    id: "convertto-html", name: "ConvertTo-Html", category: "dataio",
+    summary: "オブジェクトをHTML形式に変換する",
+    syntax: "ConvertTo-Html [-Property] <string[]>",
+    parameters: [
+      { name: "-Property", description: "表示するプロパティ" }
+    ],
+    examples: [
+      { command: 'Get-Process | ConvertTo-Html -Property Name, CPU | Out-File "process.html"', description: "プロセス一覧をHTML形式のレポートとして保存する" },
+      { command: 'Get-Service | ConvertTo-Html | Out-File "service.html"', description: "サービス一覧をHTMLファイルとして出力する" }
+    ],
+    tags: ["HTML変換", "HTMLレポート作成"]
+  },
+  {
+    id: "select-xml", name: "Select-Xml", category: "dataio",
+    summary: "XMLファイルから、指定した条件（XPath）に合う要素を検索する",
+    syntax: "Select-Xml [-Path] <string> [-XPath] <string>",
+    parameters: [
+      { name: "-Path", description: "対象のXMLファイル" },
+      { name: "-XPath", description: "検索するXPath式" }
+    ],
+    examples: [
+      { command: 'Select-Xml -Path "data.xml" -XPath "//item"', description: "XMLファイルから特定の要素を検索する" },
+      { command: "Select-Xml -Path \"config.xml\" -XPath \"//setting[@name='timeout']\"", description: "特定の属性を持つ要素を検索する" }
+    ],
+    tags: ["XML検索", "XMLから抜き出す", "XPath"]
+  },
+  {
+    id: "convertto-xml", name: "ConvertTo-Xml", category: "dataio",
+    summary: "オブジェクトをXML形式に変換する",
+    syntax: "ConvertTo-Xml [-InputObject] <object> [-As <string>]",
+    parameters: [
+      { name: "-InputObject", description: "変換するオブジェクト" },
+      { name: "-As", description: "出力形式（既定はXmlDocument）" }
+    ],
+    examples: [
+      { command: "Get-Process | Select-Object -First 3 | ConvertTo-Xml -As String", description: "プロセス情報をXML形式の文字列に変換する" },
+      { command: "Get-Service | ConvertTo-Xml | Select-Object -ExpandProperty OuterXml", description: "XML文書として出力しテキストを取り出す" }
+    ],
+    tags: ["XML変換", "XMLに変換"]
+  },
+  {
+    id: "convertfrom-stringdata", name: "ConvertFrom-StringData", category: "dataio",
+    summary: "key=value形式のテキストを、ハッシュテーブルに変換する",
+    syntax: "ConvertFrom-StringData [-StringData] <string>",
+    parameters: [
+      { name: "-StringData", description: "key=value形式の文字列" }
+    ],
+    examples: [
+      { command: 'ConvertFrom-StringData -StringData "Name=Taro`nAge=30"', description: "key=value形式のテキストをハッシュテーブルに変換する" },
+      { command: 'Get-Content "settings.txt" -Raw | ConvertFrom-StringData', description: "設定ファイルをハッシュテーブルとして読み込む" }
+    ],
+    tags: ["key=value変換", "設定ファイル読み込み", "ハッシュテーブル化"]
+  },
+
+  // ===== pipeline (追加) =====
+  {
+    id: "tee-object", name: "Tee-Object", category: "pipeline",
+    summary: "パイプラインの結果をファイルや変数に保存しつつ、そのまま次の処理にも渡す",
+    syntax: "Command | Tee-Object -FilePath <string>",
+    parameters: [
+      { name: "-FilePath", description: "保存先ファイル" },
+      { name: "-Variable", description: "保存先の変数名" }
+    ],
+    examples: [
+      { command: 'Get-Process | Tee-Object -FilePath "process.txt" | Where-Object CPU -gt 100', description: "結果をファイルに保存しつつ、そのまま次の処理にも渡す" },
+      { command: "Get-Service | Tee-Object -Variable svcResult | Format-Table", description: "結果を変数に保存しつつ画面にも表示する" }
+    ],
+    tags: ["結果を保存しつつ次に渡す", "分岐出力"]
+  },
+
+  // ===== interaction =====
+  {
+    id: "read-host", name: "Read-Host", category: "interaction",
+    summary: "ユーザーにキーボードからの入力を求め、その内容を受け取る",
+    syntax: "Read-Host [-Prompt] <string> [-AsSecureString]",
+    parameters: [
+      { name: "-Prompt", description: "表示する質問文" },
+      { name: "-AsSecureString", description: "入力内容を画面に表示せず、セキュアな形式で受け取る" }
+    ],
+    examples: [
+      { command: '$name = Read-Host "名前を入力してください"', description: "ユーザーに入力を求め、結果を変数に保存する" },
+      { command: '$pw = Read-Host "パスワードを入力してください" -AsSecureString', description: "パスワードなど、画面に表示せずに入力を受け取る" }
+    ],
+    tags: ["ユーザー入力", "キーボード入力を受け取る", "プロンプト表示"]
+  },
+  {
+    id: "out-gridview", name: "Out-GridView", aliases: ["ogv"], category: "interaction",
+    summary: "結果を並べ替え・絞り込みができるウィンドウ（GUI）で表示する",
+    syntax: "Command | Out-GridView [-Title <string>] [-PassThru]",
+    parameters: [
+      { name: "-Title", description: "ウィンドウのタイトル" },
+      { name: "-PassThru", description: "選択した項目を後続の処理に渡す" }
+    ],
+    examples: [
+      { command: "Get-Process | Out-GridView", description: "プロセス一覧を並べ替え・絞り込みができるウィンドウで表示する" },
+      { command: "Get-Service | Out-GridView -PassThru | Start-Service", description: "ウィンドウでサービスを選んでから開始する" }
+    ],
+    tags: ["表形式ウィンドウ表示", "GUIで選択", "一覧をウィンドウで見る"]
+  },
+  {
+    id: "show-command", name: "Show-Command", category: "interaction",
+    summary: "コマンドのパラメーターを入力できるGUIフォームを表示する",
+    syntax: "Show-Command [-Name] <string>",
+    parameters: [
+      { name: "-Name", description: "表示するコマンド名" }
+    ],
+    examples: [
+      { command: "Show-Command -Name Get-ChildItem", description: "コマンドのパラメーターをGUIフォームで入力できるウィンドウを表示する" },
+      { command: "Show-Command", description: "すべてのコマンドから選んでGUIで実行できるウィンドウを開く" }
+    ],
+    tags: ["GUIでコマンド入力", "パラメーター入力フォーム"]
+  },
+  {
+    id: "get-clipboard", name: "Get-Clipboard", category: "interaction",
+    summary: "現在クリップボードにコピーされているテキストを取得する",
+    syntax: "Get-Clipboard",
+    parameters: [],
+    examples: [
+      { command: "Get-Clipboard", description: "現在クリップボードにコピーされているテキストを取得する" },
+      { command: "$text = Get-Clipboard", description: "クリップボードの内容を変数に保存する" }
+    ],
+    tags: ["クリップボード取得", "コピー内容を取得"]
+  },
+  {
+    id: "set-clipboard", name: "Set-Clipboard", category: "interaction",
+    summary: "指定した内容をクリップボードにコピーする",
+    syntax: "Set-Clipboard [-Value] <string>",
+    parameters: [
+      { name: "-Value", description: "クリップボードに設定する内容" }
+    ],
+    examples: [
+      { command: 'Set-Clipboard -Value "こんにちは"', description: "指定した文字列をクリップボードにコピーする" },
+      { command: 'Get-Content "memo.txt" | Set-Clipboard', description: "ファイルの内容をそのままクリップボードにコピーする" }
+    ],
+    tags: ["クリップボードにコピー", "クリップボード設定"]
+  },
+
+  // ===== bitlocker =====
+  {
+    id: "get-bitlockervolume", name: "Get-BitLockerVolume", category: "bitlocker",
+    summary: "各ドライブのBitLocker暗号化状態を取得する",
+    syntax: "Get-BitLockerVolume [[-MountPoint] <string>]",
+    parameters: [
+      { name: "-MountPoint", description: "対象ドライブ（例: C:）" }
+    ],
+    examples: [
+      { command: "Get-BitLockerVolume", description: "各ドライブのBitLocker暗号化状態を確認する" },
+      { command: 'Get-BitLockerVolume -MountPoint "C:"', description: "Cドライブの暗号化状態を確認する" }
+    ],
+    tags: ["BitLocker状態確認", "暗号化状態確認"]
+  },
+  {
+    id: "enable-bitlocker", name: "Enable-BitLocker", category: "bitlocker",
+    summary: "ドライブのBitLocker暗号化を有効にする",
+    syntax: "Enable-BitLocker [-MountPoint] <string> [-RecoveryPasswordProtector]",
+    parameters: [
+      { name: "-MountPoint", description: "暗号化するドライブ" },
+      { name: "-RecoveryPasswordProtector", description: "回復パスワードを発行する" }
+    ],
+    examples: [
+      { command: 'Enable-BitLocker -MountPoint "D:" -RecoveryPasswordProtector', description: "Dドライブの暗号化を有効にし、回復パスワードを発行する" },
+      { command: 'Enable-BitLocker -MountPoint "C:" -UsedSpaceOnly -RecoveryPasswordProtector', description: "使用済み領域だけを暗号化して高速化する" }
+    ],
+    tags: ["BitLocker有効化", "ドライブ暗号化", "暗号化を開始"]
+  },
+  {
+    id: "disable-bitlocker", name: "Disable-BitLocker", category: "bitlocker",
+    summary: "ドライブのBitLocker暗号化を無効化する",
+    syntax: "Disable-BitLocker [-MountPoint] <string>",
+    parameters: [
+      { name: "-MountPoint", description: "対象ドライブ" }
+    ],
+    examples: [
+      { command: 'Disable-BitLocker -MountPoint "D:"', description: "ドライブの暗号化を無効化し、復号を開始する" },
+      { command: "Get-BitLockerVolume | Disable-BitLocker", description: "すべてのドライブの暗号化を無効化する" }
+    ],
+    tags: ["BitLocker無効化", "暗号化を解除"]
+  },
+  {
+    id: "lock-bitlocker", name: "Lock-BitLocker", category: "bitlocker",
+    summary: "暗号化されたドライブをロックし、アクセスできない状態にする",
+    syntax: "Lock-BitLocker [-MountPoint] <string>",
+    parameters: [
+      { name: "-MountPoint", description: "対象ドライブ" }
+    ],
+    examples: [
+      { command: 'Lock-BitLocker -MountPoint "D:"', description: "暗号化されたドライブをロックし、アクセスできない状態にする" },
+      { command: 'Lock-BitLocker -MountPoint "D:" -ForceDismount', description: "使用中でも強制的にロックする" }
+    ],
+    tags: ["BitLockerロック", "ドライブをロック"]
+  },
+  {
+    id: "unlock-bitlocker", name: "Unlock-BitLocker", category: "bitlocker",
+    summary: "ロックされたBitLockerドライブのロックを解除する",
+    syntax: "Unlock-BitLocker [-MountPoint] <string> [-Password <securestring>]",
+    parameters: [
+      { name: "-MountPoint", description: "対象ドライブ" },
+      { name: "-Password", description: "解除用のパスワード" }
+    ],
+    examples: [
+      { command: 'Unlock-BitLocker -MountPoint "D:" -Password (Read-Host -AsSecureString "パスワード")', description: "パスワードを入力してドライブのロックを解除する" },
+      { command: 'Unlock-BitLocker -MountPoint "D:" -RecoveryPassword "123456-123456-123456-123456-123456-123456-123456-123456"', description: "回復パスワードを使ってロックを解除する" }
+    ],
+    tags: ["BitLocker解除", "ドライブのロック解除"]
+  },
+
+  // ===== hyperv =====
+  {
+    id: "get-vm", name: "Get-VM", category: "hyperv",
+    summary: "Hyper-Vホスト上の仮想マシンの一覧と状態を取得する",
+    syntax: "Get-VM [[-Name] <string[]>]",
+    parameters: [
+      { name: "-Name", description: "仮想マシン名で絞り込む" }
+    ],
+    examples: [
+      { command: "Get-VM", description: "このホスト上の仮想マシンの一覧と状態を表示する" },
+      { command: 'Get-VM -Name "TestVM"', description: "特定の仮想マシンの状態を確認する" }
+    ],
+    tags: ["仮想マシン一覧", "VM確認", "Hyper-V確認"]
+  },
+  {
+    id: "start-vm", name: "Start-VM", category: "hyperv",
+    summary: "Hyper-Vの仮想マシンを起動する",
+    syntax: "Start-VM [-Name] <string>",
+    parameters: [
+      { name: "-Name", description: "起動する仮想マシン名" }
+    ],
+    examples: [
+      { command: 'Start-VM -Name "TestVM"', description: "仮想マシンを起動する" },
+      { command: 'Get-VM | Where-Object State -eq "Off" | Start-VM', description: "停止中のすべての仮想マシンを起動する" }
+    ],
+    tags: ["仮想マシン起動", "VMを起動"]
+  },
+  {
+    id: "stop-vm", name: "Stop-VM", category: "hyperv",
+    summary: "Hyper-Vの仮想マシンを停止する",
+    syntax: "Stop-VM [-Name] <string> [-Force]",
+    parameters: [
+      { name: "-Name", description: "停止する仮想マシン名" },
+      { name: "-Force", description: "強制停止する" }
+    ],
+    examples: [
+      { command: 'Stop-VM -Name "TestVM"', description: "仮想マシンをシャットダウンする" },
+      { command: 'Stop-VM -Name "TestVM" -Force', description: "応答がない仮想マシンを強制停止する" }
+    ],
+    tags: ["仮想マシン停止", "VMを止める", "VMシャットダウン"]
+  },
+  {
+    id: "new-vm", name: "New-VM", category: "hyperv",
+    summary: "新しいHyper-V仮想マシンを作成する",
+    syntax: "New-VM [-Name] <string> [-MemoryStartupBytes <int64>] [-NewVHDPath <string>]",
+    parameters: [
+      { name: "-Name", description: "作成する仮想マシン名" },
+      { name: "-MemoryStartupBytes", description: "起動時に割り当てるメモリ量" },
+      { name: "-NewVHDPath", description: "新規作成する仮想ディスクのパス" }
+    ],
+    examples: [
+      { command: 'New-VM -Name "TestVM" -MemoryStartupBytes 2GB -NewVHDPath "D:\\VMs\\TestVM.vhdx" -NewVHDSizeBytes 60GB', description: "メモリ2GB・ディスク60GBの新しい仮想マシンを作成する" },
+      { command: 'New-VM -Name "TestVM" -Generation 2', description: "第2世代の仮想マシンを作成する" }
+    ],
+    tags: ["仮想マシン作成", "VMを新規作成"]
+  },
+  {
+    id: "remove-vm", name: "Remove-VM", category: "hyperv",
+    summary: "Hyper-V仮想マシンの構成を削除する",
+    syntax: "Remove-VM [-Name] <string> [-Force]",
+    parameters: [
+      { name: "-Name", description: "削除する仮想マシン名" },
+      { name: "-Force", description: "確認なしで削除する" }
+    ],
+    examples: [
+      { command: 'Remove-VM -Name "TestVM" -Force', description: "仮想マシンの構成を削除する（仮想ディスクは別途削除が必要）" },
+      { command: 'Get-VM -Name "Test*" | Remove-VM -Force', description: "名前がTestで始まる仮想マシンをまとめて削除する" }
+    ],
+    tags: ["仮想マシン削除", "VMを消す"]
+  },
+
+  // ===== winfeature =====
+  {
+    id: "get-windowsoptionalfeature", name: "Get-WindowsOptionalFeature", category: "winfeature",
+    summary: "有効/無効にできるWindowsの機能一覧を取得する",
+    syntax: "Get-WindowsOptionalFeature -Online [[-FeatureName] <string>]",
+    parameters: [
+      { name: "-Online", description: "実行中のWindowsを対象にする" },
+      { name: "-FeatureName", description: "機能名で絞り込む" }
+    ],
+    examples: [
+      { command: "Get-WindowsOptionalFeature -Online", description: "有効/無効にできるWindowsの機能一覧を表示する" },
+      { command: 'Get-WindowsOptionalFeature -Online -FeatureName "*Hyper-V*"', description: "Hyper-V関連の機能の状態を確認する" }
+    ],
+    tags: ["Windows機能一覧", "オプション機能確認"]
+  },
+  {
+    id: "enable-windowsoptionalfeature", name: "Enable-WindowsOptionalFeature", category: "winfeature",
+    summary: "Windowsのオプション機能を有効化する",
+    syntax: "Enable-WindowsOptionalFeature -Online [-FeatureName] <string>",
+    parameters: [
+      { name: "-Online", description: "実行中のWindowsを対象にする" },
+      { name: "-FeatureName", description: "有効化する機能名" }
+    ],
+    examples: [
+      { command: 'Enable-WindowsOptionalFeature -Online -FeatureName "Microsoft-Hyper-V-All"', description: "Hyper-V機能を有効化する（再起動が必要な場合がある）" },
+      { command: 'Enable-WindowsOptionalFeature -Online -FeatureName "TelnetClient" -All', description: "Telnetクライアント機能を有効化する" }
+    ],
+    tags: ["Windows機能を有効化", "オプション機能を追加"]
+  },
+  {
+    id: "disable-windowsoptionalfeature", name: "Disable-WindowsOptionalFeature", category: "winfeature",
+    summary: "Windowsのオプション機能を無効化する",
+    syntax: "Disable-WindowsOptionalFeature -Online [-FeatureName] <string>",
+    parameters: [
+      { name: "-Online", description: "実行中のWindowsを対象にする" },
+      { name: "-FeatureName", description: "無効化する機能名" }
+    ],
+    examples: [
+      { command: 'Disable-WindowsOptionalFeature -Online -FeatureName "TelnetClient"', description: "使用していない機能を無効化する" },
+      { command: 'Disable-WindowsOptionalFeature -Online -FeatureName "Microsoft-Hyper-V-All" -NoRestart', description: "再起動せずに機能を無効化する" }
+    ],
+    tags: ["Windows機能を無効化", "オプション機能を削除"]
+  },
+
+  // ===== activedirectory =====
+  {
+    id: "get-aduser", name: "Get-ADUser", category: "activedirectory",
+    summary: "Active Directoryのユーザーアカウントの情報を取得する",
+    syntax: "Get-ADUser [-Identity] <string> | [-Filter] <string>",
+    parameters: [
+      { name: "-Identity", description: "対象ユーザーのアカウント名" },
+      { name: "-Filter", description: "検索条件" }
+    ],
+    examples: [
+      { command: 'Get-ADUser -Identity "tanaka"', description: "特定のADユーザーの情報を取得する" },
+      { command: "Get-ADUser -Filter \"Department -eq '営業部'\"", description: "部署名で条件を指定してユーザーを検索する" }
+    ],
+    tags: ["ADユーザー確認", "Active Directoryユーザー検索"]
+  },
+  {
+    id: "new-aduser", name: "New-ADUser", category: "activedirectory",
+    summary: "新しいActive Directoryユーザーアカウントを作成する",
+    syntax: "New-ADUser [-Name] <string> [-SamAccountName <string>] [-Enabled <bool>]",
+    parameters: [
+      { name: "-Name", description: "表示名" },
+      { name: "-SamAccountName", description: "ログオン名" },
+      { name: "-Enabled", description: "アカウントを有効にするか" }
+    ],
+    examples: [
+      { command: 'New-ADUser -Name "田中太郎" -SamAccountName "tanaka" -Enabled $true', description: "新しいADユーザーアカウントを作成する" },
+      { command: 'New-ADUser -Name "田中太郎" -SamAccountName "tanaka" -Path "OU=Sales,DC=example,DC=com"', description: "特定の組織単位（OU）にユーザーを作成する" }
+    ],
+    tags: ["ADユーザー作成", "新しいアカウントを作成"]
+  },
+  {
+    id: "set-aduser", name: "Set-ADUser", category: "activedirectory",
+    summary: "既存のActive Directoryユーザーの属性を変更する",
+    syntax: "Set-ADUser [-Identity] <string> [-Department <string>] [-Enabled <bool>]",
+    parameters: [
+      { name: "-Identity", description: "対象ユーザー" },
+      { name: "-Department", description: "部署名などの属性" },
+      { name: "-Enabled", description: "有効/無効の切り替え" }
+    ],
+    examples: [
+      { command: 'Set-ADUser -Identity "tanaka" -Department "営業部"', description: "ユーザーの部署属性を変更する" },
+      { command: 'Set-ADUser -Identity "tanaka" -Enabled $false', description: "ユーザーアカウントを無効化する" }
+    ],
+    tags: ["ADユーザー編集", "ユーザー情報を変更"]
+  },
+  {
+    id: "remove-aduser", name: "Remove-ADUser", category: "activedirectory",
+    summary: "Active Directoryユーザーアカウントを削除する",
+    syntax: "Remove-ADUser [-Identity] <string>",
+    parameters: [
+      { name: "-Identity", description: "削除するユーザー" }
+    ],
+    examples: [
+      { command: 'Remove-ADUser -Identity "tanaka" -Confirm:$false', description: "ADユーザーを削除する" },
+      { command: 'Get-ADUser -Filter "Enabled -eq $false" | Remove-ADUser -Confirm:$false', description: "無効化されているユーザーをまとめて削除する" }
+    ],
+    tags: ["ADユーザー削除"]
+  },
+  {
+    id: "get-adgroup", name: "Get-ADGroup", category: "activedirectory",
+    summary: "Active Directoryグループの情報を取得する",
+    syntax: "Get-ADGroup [-Identity] <string> | [-Filter] <string>",
+    parameters: [
+      { name: "-Identity", description: "対象グループ" },
+      { name: "-Filter", description: "検索条件" }
+    ],
+    examples: [
+      { command: 'Get-ADGroup -Identity "営業部"', description: "特定のADグループの情報を取得する" },
+      { command: 'Get-ADGroup -Filter "*"', description: "すべてのADグループを一覧表示する" }
+    ],
+    tags: ["ADグループ確認"]
+  },
+  {
+    id: "add-adgroupmember", name: "Add-ADGroupMember", category: "activedirectory",
+    summary: "Active Directoryグループにユーザーを追加する",
+    syntax: "Add-ADGroupMember [-Identity] <string> [-Members] <string[]>",
+    parameters: [
+      { name: "-Identity", description: "対象グループ" },
+      { name: "-Members", description: "追加するユーザー" }
+    ],
+    examples: [
+      { command: 'Add-ADGroupMember -Identity "営業部" -Members "tanaka"', description: "ADユーザーをグループに追加する" },
+      { command: 'Add-ADGroupMember -Identity "営業部" -Members "tanaka","suzuki"', description: "複数のユーザーを一度に追加する" }
+    ],
+    tags: ["ADグループにメンバー追加"]
+  },
+  {
+    id: "get-adcomputer", name: "Get-ADComputer", category: "activedirectory",
+    summary: "ドメインに参加しているコンピューターの情報を取得する",
+    syntax: "Get-ADComputer [-Identity] <string> | [-Filter] <string>",
+    parameters: [
+      { name: "-Identity", description: "対象コンピューター名" },
+      { name: "-Filter", description: "検索条件" }
+    ],
+    examples: [
+      { command: 'Get-ADComputer -Identity "PC001"', description: "ドメインに参加している特定のPCの情報を取得する" },
+      { command: "Get-ADComputer -Filter \"*\" | Select-Object Name", description: "ドメインに参加しているすべてのPC名を一覧表示する" }
+    ],
+    tags: ["ADコンピューター確認", "ドメイン参加PC一覧"]
+  },
+  {
+    id: "search-adaccount", name: "Search-ADAccount", category: "activedirectory",
+    summary: "ロックされたアカウントやパスワード期限切れのアカウントを検索する",
+    syntax: "Search-ADAccount -LockedOut | -AccountExpired | -PasswordExpired",
+    parameters: [
+      { name: "-LockedOut", description: "ロックされたアカウントを検索する" },
+      { name: "-PasswordExpired", description: "パスワードが期限切れのアカウントを検索する" }
+    ],
+    examples: [
+      { command: "Search-ADAccount -LockedOut", description: "ロックされているアカウントを検索する" },
+      { command: "Search-ADAccount -PasswordExpired -UsersOnly", description: "パスワードが期限切れのユーザーを検索する" }
+    ],
+    tags: ["ロックされたアカウント検索", "パスワード期限切れ確認"]
+  },
+  {
+    id: "set-adaccountpassword", name: "Set-ADAccountPassword", category: "activedirectory",
+    summary: "Active Directoryアカウントのパスワードをリセットする",
+    syntax: "Set-ADAccountPassword [-Identity] <string> [-NewPassword <securestring>]",
+    parameters: [
+      { name: "-Identity", description: "対象アカウント" },
+      { name: "-NewPassword", description: "新しいパスワード" }
+    ],
+    examples: [
+      { command: 'Set-ADAccountPassword -Identity "tanaka" -NewPassword (Read-Host -AsSecureString "新しいパスワード")', description: "ADユーザーのパスワードをリセットする" },
+      { command: 'Set-ADAccountPassword -Identity "tanaka" -Reset -NewPassword (ConvertTo-SecureString "P@ssw0rd!" -AsPlainText -Force)', description: "パスワードを指定した値にリセットする" }
+    ],
+    tags: ["ADパスワードリセット", "パスワードを変更"]
+  },
+
+  // ===== device =====
+  {
+    id: "get-pnpdevice", name: "Get-PnpDevice", category: "device",
+    summary: "接続されているプラグアンドプレイデバイスの一覧を取得する",
+    syntax: "Get-PnpDevice [[-Class] <string>]",
+    parameters: [
+      { name: "-Class", description: "デバイスの種類で絞り込む（例: Printer, USB）" }
+    ],
+    examples: [
+      { command: "Get-PnpDevice", description: "接続されているプラグアンドプレイデバイスの一覧を表示する" },
+      { command: "Get-PnpDevice -Class USB", description: "USB関連のデバイスだけを表示する" }
+    ],
+    tags: ["デバイス一覧", "デバイスマネージャー", "接続機器確認"]
+  },
+  {
+    id: "enable-pnpdevice", name: "Enable-PnpDevice", category: "device",
+    summary: "無効化されているデバイスを有効化する",
+    syntax: "Enable-PnpDevice [-InstanceId] <string>",
+    parameters: [
+      { name: "-InstanceId", description: "対象デバイスのID（Get-PnpDeviceで取得）" }
+    ],
+    examples: [
+      { command: 'Get-PnpDevice -FriendlyName "*Bluetooth*" | Enable-PnpDevice -Confirm:$false', description: "無効化されているBluetoothデバイスを有効化する" },
+      { command: 'Enable-PnpDevice -InstanceId "USB\\VID_0001&PID_0002\\..." -Confirm:$false', description: "特定のデバイスIDを指定して有効化する" }
+    ],
+    tags: ["デバイス有効化", "無効化したデバイスを戻す"]
+  },
+  {
+    id: "disable-pnpdevice", name: "Disable-PnpDevice", category: "device",
+    summary: "指定したデバイスを無効化する",
+    syntax: "Disable-PnpDevice [-InstanceId] <string>",
+    parameters: [
+      { name: "-InstanceId", description: "対象デバイスのID" }
+    ],
+    examples: [
+      { command: 'Get-PnpDevice -FriendlyName "*Webcam*" | Disable-PnpDevice -Confirm:$false', description: "内蔵カメラなどのデバイスを無効化する" },
+      { command: 'Disable-PnpDevice -InstanceId "USB\\VID_0001&PID_0002\\..." -Confirm:$false', description: "特定のデバイスIDを指定して無効化する" }
+    ],
+    tags: ["デバイス無効化", "デバイスを止める"]
+  },
+
+  // ===== debug =====
+  {
+    id: "set-psbreakpoint", name: "Set-PSBreakpoint", category: "debug",
+    summary: "スクリプトの特定の行やコマンドにブレークポイント（一時停止ポイント）を設定する",
+    syntax: "Set-PSBreakpoint [-Script] <string> [-Line] <int>",
+    parameters: [
+      { name: "-Script", description: "対象スクリプトファイル" },
+      { name: "-Line", description: "ブレークポイントを設定する行番号" }
+    ],
+    examples: [
+      { command: 'Set-PSBreakpoint -Script "script.ps1" -Line 10', description: "スクリプトの10行目にブレークポイントを設定する" },
+      { command: 'Set-PSBreakpoint -Script "script.ps1" -Command "Get-Process"', description: "特定のコマンドが呼ばれたときに止まるようにする" }
+    ],
+    tags: ["ブレークポイント設定", "デバッグ", "スクリプトを一時停止"]
+  },
+  {
+    id: "get-psbreakpoint", name: "Get-PSBreakpoint", category: "debug",
+    summary: "現在設定されているブレークポイントの一覧を取得する",
+    syntax: "Get-PSBreakpoint",
+    parameters: [],
+    examples: [
+      { command: "Get-PSBreakpoint", description: "現在設定されているブレークポイントの一覧を表示する" },
+      { command: 'Get-PSBreakpoint -Script "script.ps1"', description: "特定のスクリプトのブレークポイントだけを表示する" }
+    ],
+    tags: ["ブレークポイント確認"]
+  },
+  {
+    id: "remove-psbreakpoint", name: "Remove-PSBreakpoint", category: "debug",
+    summary: "設定済みのブレークポイントを削除する",
+    syntax: "Remove-PSBreakpoint [-Breakpoint] <Breakpoint[]>",
+    parameters: [
+      { name: "-Breakpoint", description: "削除するブレークポイント（Get-PSBreakpointの結果など）" }
+    ],
+    examples: [
+      { command: "Get-PSBreakpoint | Remove-PSBreakpoint", description: "すべてのブレークポイントを削除する" },
+      { command: 'Get-PSBreakpoint -Script "script.ps1" | Remove-PSBreakpoint', description: "特定のスクリプトのブレークポイントだけを削除する" }
+    ],
+    tags: ["ブレークポイント削除"]
+  },
+  {
+    id: "set-psdebug", name: "Set-PSDebug", category: "debug",
+    summary: "スクリプトの実行内容を1行ずつ表示・確認する、トレース／ステップモードを設定する",
+    syntax: "Set-PSDebug [-Trace <int>] [-Step]",
+    parameters: [
+      { name: "-Trace", description: "実行される各行を表示するレベル（0～2）" },
+      { name: "-Step", description: "1行ごとに確認しながら実行する" }
+    ],
+    examples: [
+      { command: "Set-PSDebug -Trace 1", description: "スクリプトの実行行を1行ずつ画面に表示しながら実行する" },
+      { command: "Set-PSDebug -Off", description: "トレース・ステップモードを解除する" }
+    ],
+    tags: ["トレース実行", "ステップ実行", "デバッグモード"]
+  },
+
+  // ===== event =====
+  {
+    id: "start-transcript", name: "Start-Transcript", category: "event",
+    summary: "これ以降のコンソール操作をすべてファイルに記録する",
+    syntax: "Start-Transcript [-Path] <string>",
+    parameters: [
+      { name: "-Path", description: "記録するファイルパス" }
+    ],
+    examples: [
+      { command: 'Start-Transcript -Path "session.log"', description: "これ以降のコンソール操作をすべてファイルに記録する" },
+      { command: 'Start-Transcript -Path "session.log" -Append', description: "既存のログファイルに追記する形で記録する" }
+    ],
+    tags: ["操作記録", "セッションを記録", "ログを取る"]
+  },
+  {
+    id: "stop-transcript", name: "Stop-Transcript", category: "event",
+    summary: "Start-Transcriptで開始した操作記録を終了する",
+    syntax: "Stop-Transcript",
+    parameters: [],
+    examples: [
+      { command: "Stop-Transcript", description: "Start-Transcriptで開始した記録を終了する" },
+      { command: 'Start-Transcript -Path "log.txt"; Get-Process; Stop-Transcript', description: "記録を開始し、コマンドを実行して、記録を終了する一連の流れ" }
+    ],
+    tags: ["記録終了", "ログ記録を止める"]
+  },
+  {
+    id: "register-objectevent", name: "Register-ObjectEvent", category: "event",
+    summary: ".NETオブジェクトが発生させるイベントを監視し、発生時に処理を実行する",
+    syntax: "Register-ObjectEvent [-InputObject] <object> [-EventName] <string> [-Action <scriptblock>]",
+    parameters: [
+      { name: "-InputObject", description: "イベントを発生させるオブジェクト" },
+      { name: "-EventName", description: "監視するイベント名" },
+      { name: "-Action", description: "発生時に実行する処理" }
+    ],
+    examples: [
+      { command: '$watcher = New-Object System.IO.FileSystemWatcher "C:\\work"\nRegister-ObjectEvent $watcher Created -Action { Write-Host "ファイルが作成されました" }', description: "フォルダにファイルが作成されたら通知する" },
+      { command: "Register-ObjectEvent -InputObject $timer -EventName Elapsed -Action { Write-Host \"タイマー発火\" }", description: "タイマーオブジェクトのイベントを監視する" }
+    ],
+    tags: ["イベント監視", "ファイル監視", "イベント駆動処理"]
+  },
+  {
+    id: "get-eventsubscriber", name: "Get-EventSubscriber", category: "event",
+    summary: "現在登録されているイベント監視の一覧を取得する",
+    syntax: "Get-EventSubscriber",
+    parameters: [],
+    examples: [
+      { command: "Get-EventSubscriber", description: "現在登録されているイベント監視の一覧を表示する" },
+      { command: "Get-EventSubscriber | Select-Object SubscriptionId, EventName", description: "登録済みイベントのIDと種類を確認する" }
+    ],
+    tags: ["イベント監視一覧", "登録済みイベント確認"]
+  },
+  {
+    id: "unregister-event", name: "Unregister-Event", category: "event",
+    summary: "登録済みのイベント監視を解除する",
+    syntax: "Unregister-Event [-SubscriptionId] <int32>",
+    parameters: [
+      { name: "-SubscriptionId", description: "解除するイベント監視のID" }
+    ],
+    examples: [
+      { command: "Unregister-Event -SubscriptionId 1", description: "指定したIDのイベント監視を解除する" },
+      { command: "Get-EventSubscriber | Unregister-Event", description: "すべてのイベント監視を解除する" }
+    ],
+    tags: ["イベント監視解除"]
+  },
+  {
+    id: "wait-event", name: "Wait-Event", category: "event",
+    summary: "指定したイベントが発生するまで処理を停止して待つ",
+    syntax: "Wait-Event [[-SourceIdentifier] <string>] [-Timeout <int>]",
+    parameters: [
+      { name: "-SourceIdentifier", description: "待機するイベント名" },
+      { name: "-Timeout", description: "最大待機秒数" }
+    ],
+    examples: [
+      { command: 'Wait-Event -SourceIdentifier "MyEvent"', description: "指定したイベントが発生するまで処理を停止して待つ" },
+      { command: "Wait-Event -Timeout 30", description: "最大30秒だけ何らかのイベントの発生を待つ" }
+    ],
+    tags: ["イベント待機", "イベント発生を待つ"]
+  },
+  {
+    id: "new-event", name: "New-Event", category: "event",
+    summary: "独自のイベントを発生させる",
+    syntax: "New-Event [-SourceIdentifier] <string> [-MessageData <object>]",
+    parameters: [
+      { name: "-SourceIdentifier", description: "発生させるイベント名" },
+      { name: "-MessageData", description: "イベントに含める情報" }
+    ],
+    examples: [
+      { command: 'New-Event -SourceIdentifier "MyEvent" -MessageData "処理完了"', description: "独自のイベントを発生させる" },
+      { command: 'New-Event -SourceIdentifier "MyEvent"', description: "監視側のテスト用にイベントを手動で発生させる" }
+    ],
+    tags: ["イベント発生", "カスタムイベント作成"]
+  },
+  {
+    id: "get-event", name: "Get-Event", category: "event",
+    summary: "発生してキューに残っているイベントの一覧を取得する",
+    syntax: "Get-Event [[-SourceIdentifier] <string>]",
+    parameters: [
+      { name: "-SourceIdentifier", description: "イベント名で絞り込む" }
+    ],
+    examples: [
+      { command: "Get-Event", description: "発生してキューに残っているイベントの一覧を表示する" },
+      { command: 'Get-Event -SourceIdentifier "MyEvent"', description: "特定のイベントだけを確認する" }
+    ],
+    tags: ["イベント一覧確認", "発生したイベントを見る"]
   }
 ];
