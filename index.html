@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PowerShellコマンド検索</title>
+<meta name="description" content="PowerShellのコマンドをコマンド名や『したいこと』から検索できるツールです。">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="app-header">
+  <a href="#/" class="app-title">PowerShellコマンド検索</a>
+</header>
+
+<main id="app">
+
+  <!-- ホーム画面 -->
+  <section id="view-home" class="view">
+    <form id="form-name" class="search-card" autocomplete="off">
+      <label for="input-name">コマンド名で検索</label>
+      <textarea id="input-name" rows="2" placeholder="例）Get-ChildItem、または ls"></textarea>
+      <button type="submit" class="btn btn-primary">検索</button>
+    </form>
+
+    <form id="form-intent" class="search-card" autocomplete="off">
+      <label for="input-intent">したいことで検索</label>
+      <textarea id="input-intent" rows="2" placeholder="例）ファイルを削除したい"></textarea>
+      <button type="submit" class="btn btn-primary">検索</button>
+    </form>
+
+    <div class="search-card">
+      <p class="card-lead">コマンドを一覧から探す</p>
+      <a href="#/list" class="btn btn-secondary">全コマンド一覧を表示</a>
+    </div>
+  </section>
+
+  <!-- 検索結果（候補リスト）画面 -->
+  <section id="view-results" class="view" hidden>
+    <a href="#/" class="back-link">&larr; ホームに戻る</a>
+    <h2 id="results-heading">検索結果</h2>
+    <p id="results-empty" class="empty-message" hidden>該当するコマンドが見つかりませんでした。キーワードを変えて試すか、全コマンド一覧から探してみてください。</p>
+    <ul id="results-list" class="result-list"></ul>
+  </section>
+
+  <!-- 全コマンド一覧画面 -->
+  <section id="view-list" class="view" hidden>
+    <a href="#/" class="back-link">&larr; ホームに戻る</a>
+    <h2>全コマンド一覧</h2>
+    <div id="category-list"></div>
+  </section>
+
+  <!-- コマンド詳細画面 -->
+  <section id="view-detail" class="view" hidden>
+    <a href="#/" class="back-link">&larr; ホームに戻る</a>
+    <div id="detail-content"></div>
+  </section>
+
+</main>
+
+<footer class="app-footer">
+  <p>掲載しているコマンド情報は代表的な使い方をまとめたものです。正式な仕様は<a href="https://learn.microsoft.com/powershell/" target="_blank" rel="noopener">Microsoft公式ドキュメント</a>もご確認ください。</p>
+</footer>
+
+<script src="data/commands.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

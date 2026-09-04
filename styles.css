@@ -1,0 +1,347 @@
+:root {
+  --color-bg: #f5f6f8;
+  --color-surface: #ffffff;
+  --color-text: #1c1e21;
+  --color-text-muted: #5c6470;
+  --color-border: #dde1e6;
+  --color-primary: #2757d6;
+  --color-primary-dark: #1c3f9e;
+  --color-accent-bg: #eef2fd;
+  --radius: 10px;
+  --max-width: 720px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: "Segoe UI", "Hiragino Sans", "Yu Gothic UI", "Meiryo", system-ui, sans-serif;
+  line-height: 1.6;
+}
+
+.app-header {
+  background: var(--color-primary);
+  padding: 14px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.app-title {
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+#app {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.view {
+  display: block;
+}
+
+.search-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.search-card label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.card-lead {
+  font-weight: 600;
+  margin: 0 0 12px;
+  font-size: 0.95rem;
+}
+
+textarea {
+  width: 100%;
+  font-size: 1rem;
+  font-family: inherit;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  resize: vertical;
+  margin-bottom: 12px;
+}
+
+textarea:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.btn {
+  display: inline-block;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  min-width: 120px;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.btn-primary:active {
+  background: var(--color-primary-dark);
+}
+
+.btn-secondary {
+  background: var(--color-accent-bg);
+  color: var(--color-primary-dark);
+  border: 1px solid var(--color-primary);
+  width: 100%;
+}
+
+.back-link {
+  display: inline-block;
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.empty-message {
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.result-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.result-item {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+}
+
+.result-item a {
+  display: block;
+  padding: 14px 16px;
+  text-decoration: none;
+  color: var(--color-text);
+}
+
+.result-item .cmd-name {
+  color: var(--color-primary-dark);
+  font-weight: 700;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 1.02rem;
+}
+
+.result-item .cmd-summary {
+  color: var(--color-text-muted);
+  font-size: 0.92rem;
+  margin-top: 4px;
+}
+
+/* カテゴリ一覧 */
+.category-group {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.category-group summary {
+  padding: 14px 16px;
+  font-weight: 700;
+  cursor: pointer;
+  list-style: none;
+}
+
+.category-group summary::-webkit-details-marker {
+  display: none;
+}
+
+.category-group summary::before {
+  content: "▸ ";
+  color: var(--color-primary);
+}
+
+.category-group[open] summary::before {
+  content: "▾ ";
+}
+
+.category-command-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 16px 12px;
+}
+
+.category-command-list li {
+  border-top: 1px solid var(--color-border);
+}
+
+.category-command-list a {
+  display: block;
+  padding: 10px 4px;
+  text-decoration: none;
+  color: var(--color-text);
+  font-family: Consolas, "Courier New", monospace;
+}
+
+.category-command-list a:active {
+  color: var(--color-primary);
+}
+
+/* 詳細画面 */
+.detail-header {
+  margin-bottom: 12px;
+}
+
+.detail-name {
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  word-break: break-word;
+}
+
+.detail-badges {
+  margin-top: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.badge {
+  display: inline-block;
+  background: var(--color-accent-bg);
+  color: var(--color-primary-dark);
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.detail-summary {
+  color: var(--color-text-muted);
+  margin: 10px 0 0;
+}
+
+.detail-section {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.detail-section h3 {
+  margin: 0 0 12px;
+  font-size: 1rem;
+}
+
+.syntax-block {
+  background: #f0f1f3;
+  border-radius: 8px;
+  padding: 12px;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.9rem;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.param-list {
+  margin: 0;
+  padding: 0;
+}
+
+.param-list dt {
+  font-family: Consolas, "Courier New", monospace;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  margin-top: 10px;
+}
+
+.param-list dt:first-child {
+  margin-top: 0;
+}
+
+.param-list dd {
+  margin: 2px 0 0;
+  color: var(--color-text);
+}
+
+.example-item {
+  margin-bottom: 14px;
+}
+
+.example-item:last-child {
+  margin-bottom: 0;
+}
+
+.example-command {
+  background: #f0f1f3;
+  border-radius: 8px;
+  padding: 12px;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.9rem;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.example-description {
+  color: var(--color-text-muted);
+  font-size: 0.92rem;
+  margin: 6px 0 0;
+}
+
+.no-data {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.app-footer {
+  max-width: var(--max-width);
+  margin: 24px auto 40px;
+  padding: 0 16px;
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+}
+
+.app-footer a {
+  color: var(--color-primary);
+}
+
+@media (min-width: 600px) {
+  #app {
+    padding: 24px 16px;
+  }
+}
