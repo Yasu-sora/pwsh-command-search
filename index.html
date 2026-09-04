@@ -12,10 +12,10 @@
   <a href="#/" class="app-title">PowerShellコマンド検索</a>
 </header>
 
-<main id="app">
+<div class="layout">
 
-  <!-- ホーム画面 -->
-  <section id="view-home" class="view">
+  <!-- 左側：検索パネル（常時表示） -->
+  <aside class="panel-search">
     <form id="form-name" class="search-card" autocomplete="off">
       <label for="input-name">コマンド名で検索</label>
       <textarea id="input-name" rows="2" placeholder="例）Get-ChildItem、または ls"></textarea>
@@ -28,34 +28,41 @@
       <button type="submit" class="btn btn-primary">検索</button>
     </form>
 
-    <div class="search-card">
-      <p class="card-lead">コマンドを一覧から探す</p>
+    <div class="search-card actions-card">
       <a href="#/list" class="btn btn-secondary">全コマンド一覧を表示</a>
+      <button type="button" id="btn-reset" class="btn btn-ghost">検索をリセット</button>
     </div>
+  </aside>
+
+  <!-- 右側：検索結果・詳細を表示するパネル -->
+  <section class="panel-content">
+
+    <div class="content-view" id="view-idle">
+      <div class="idle-placeholder">
+        <p>左のフォームからコマンド名や「したいこと」を入力して検索するか、「全コマンド一覧を表示」から探してみてください。</p>
+        <p>検索結果や詳細はこちらに表示されます。</p>
+      </div>
+    </div>
+
+    <div class="content-view" id="view-results" hidden>
+      <h2 id="results-heading">検索結果</h2>
+      <p id="results-empty" class="empty-message" hidden>該当するコマンドが見つかりませんでした。キーワードを変えて試すか、全コマンド一覧から探してみてください。</p>
+      <ul id="results-list" class="result-list"></ul>
+    </div>
+
+    <div class="content-view" id="view-list" hidden>
+      <h2>全コマンド一覧</h2>
+      <div id="category-list"></div>
+    </div>
+
+    <div class="content-view" id="view-detail" hidden>
+      <button type="button" class="back-link" id="detail-back">&larr; 戻る</button>
+      <div id="detail-content"></div>
+    </div>
+
   </section>
 
-  <!-- 検索結果（候補リスト）画面 -->
-  <section id="view-results" class="view" hidden>
-    <a href="#/" class="back-link">&larr; ホームに戻る</a>
-    <h2 id="results-heading">検索結果</h2>
-    <p id="results-empty" class="empty-message" hidden>該当するコマンドが見つかりませんでした。キーワードを変えて試すか、全コマンド一覧から探してみてください。</p>
-    <ul id="results-list" class="result-list"></ul>
-  </section>
-
-  <!-- 全コマンド一覧画面 -->
-  <section id="view-list" class="view" hidden>
-    <a href="#/" class="back-link">&larr; ホームに戻る</a>
-    <h2>全コマンド一覧</h2>
-    <div id="category-list"></div>
-  </section>
-
-  <!-- コマンド詳細画面 -->
-  <section id="view-detail" class="view" hidden>
-    <a href="#/" class="back-link">&larr; ホームに戻る</a>
-    <div id="detail-content"></div>
-  </section>
-
-</main>
+</div>
 
 <footer class="app-footer">
   <p>掲載しているコマンド情報は代表的な使い方をまとめたものです。正式な仕様は<a href="https://learn.microsoft.com/powershell/" target="_blank" rel="noopener">Microsoft公式ドキュメント</a>もご確認ください。</p>

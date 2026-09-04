@@ -8,7 +8,8 @@
   --color-primary-dark: #1c3f9e;
   --color-accent-bg: #eef2fd;
   --radius: 10px;
-  --max-width: 720px;
+  --max-width: 1100px;
+  --search-panel-width: 320px;
 }
 
 * {
@@ -42,15 +43,46 @@ body {
   text-decoration: none;
 }
 
-#app {
+/* ---- 左右分割レイアウト ---- */
+
+.layout {
   max-width: var(--max-width);
   margin: 0 auto;
   padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: flex-start;
 }
 
-.view {
-  display: block;
+.panel-search {
+  width: 100%;
 }
+
+.panel-content {
+  width: 100%;
+  min-width: 0;
+  background: transparent;
+}
+
+@media (min-width: 860px) {
+  .layout {
+    flex-direction: row;
+  }
+
+  .panel-search {
+    flex: 0 0 var(--search-panel-width);
+    position: sticky;
+    top: 76px;
+  }
+
+  .panel-content {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+/* ---- 検索カード ---- */
 
 .search-card {
   background: var(--color-surface);
@@ -67,10 +99,10 @@ body {
   font-size: 0.95rem;
 }
 
-.card-lead {
-  font-weight: 600;
-  margin: 0 0 12px;
-  font-size: 0.95rem;
+.actions-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 textarea {
@@ -118,12 +150,47 @@ textarea:focus {
   width: 100%;
 }
 
+.btn-ghost {
+  background: transparent;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  width: 100%;
+}
+
+.btn-ghost:active {
+  background: var(--color-bg);
+}
+
+/* ---- 右側パネル：共通 ---- */
+
+.content-view h2 {
+  margin-top: 0;
+}
+
+.idle-placeholder {
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius);
+  padding: 28px 20px;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.idle-placeholder p {
+  margin: 6px 0;
+}
+
 .back-link {
   display: inline-block;
+  background: none;
+  border: none;
+  padding: 0;
   color: var(--color-primary);
   text-decoration: none;
   font-weight: 600;
+  font-size: 1rem;
   margin-bottom: 16px;
+  cursor: pointer;
 }
 
 .empty-message {
@@ -338,10 +405,4 @@ textarea:focus {
 
 .app-footer a {
   color: var(--color-primary);
-}
-
-@media (min-width: 600px) {
-  #app {
-    padding: 24px 16px;
-  }
 }

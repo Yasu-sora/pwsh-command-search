@@ -12,7 +12,7 @@
   });
 
   var views = {
-    home: document.getElementById("view-home"),
+    idle: document.getElementById("view-idle"),
     results: document.getElementById("view-results"),
     list: document.getElementById("view-list"),
     detail: document.getElementById("view-detail")
@@ -22,7 +22,6 @@
     Object.keys(views).forEach(function (key) {
       views[key].hidden = key !== name;
     });
-    window.scrollTo(0, 0);
   }
 
   function escapeHtml(str) {
@@ -251,7 +250,7 @@
     var parts = hash.replace(/^#\/?/, "").split("/").filter(Boolean).map(decodeURIComponent);
 
     if (parts.length === 0) {
-      showView("home");
+      showView("idle");
       return;
     }
 
@@ -279,7 +278,7 @@
       return;
     }
 
-    showView("home");
+    showView("idle");
   }
 
   function goToSearch(type, query) {
@@ -296,6 +295,24 @@
   document.getElementById("form-intent").addEventListener("submit", function (e) {
     e.preventDefault();
     goToSearch("intent", document.getElementById("input-intent").value);
+  });
+
+  document.getElementById("btn-reset").addEventListener("click", function () {
+    document.getElementById("input-name").value = "";
+    document.getElementById("input-intent").value = "";
+    if (window.location.hash && window.location.hash !== "#/") {
+      window.location.hash = "#/";
+    } else {
+      showView("idle");
+    }
+  });
+
+  document.getElementById("detail-back").addEventListener("click", function () {
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      window.location.hash = "#/";
+    }
   });
 
   window.addEventListener("hashchange", handleRoute);
